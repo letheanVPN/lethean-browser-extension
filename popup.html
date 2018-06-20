@@ -3,22 +3,19 @@
 <head>
   <title>Intense Coin</title>
   <link href="./popup.css" type="text/css" rel="stylesheet">
-  <script>
-    function call(){
-      alert("teste");
-    }
-  </script>
 </head>
 <body>
   <h1>Intense Coin</h1>
   <div role="main">
-    <form id="proxyForm">
+    <form id="proxyForm" name="proxyForm">
       
       <fieldset id="fixed_servers">
         <div style="font-size: 22px; color: #fff; width: 100%;">Welcome to<br /> Intese VPN</div>
-        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="visibility: hidden;">
-        <label for="proxyTypeManual"><input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: 1px solid #412d57; cursor: pointer;"></label>        
-        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">Click to Connect</div>
+        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 150px; height: 150px; position: absolute; z-index: 9; margin: 20px -65px; opacity: 0;">
+        <label for="proxyTypeManual">
+          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; cursor: pointer; background-repeat: no-repeat; position: absolute; z-index: 1; margin: 20px -65px;">
+        </label>        
+        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; position: absolute; margin: 180px -10px;">Click to Connect</div>
 
         <section hidden="hidden">
           <fieldset>
@@ -84,14 +81,20 @@
       </fieldset>
 
       <fieldset id="system" style="margin: 30px 0px 0px 0px;">
-        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="visibility: hidden;">
-        <label for="proxyTypeSystem"><input type="submit" value="" style="background-image: url('images/power_off.png'); height: 81px; width: 81px; border: 1px solid #412d57;  cursor: pointer;"></label>
+        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin: 180px -25px; opacity: 0">
+        <label for="proxyTypeSystem">
+          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  cursor: pointer; height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin: 180px -25px;">
+        </label>
         <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">Disconnect</div>
       </fieldset>
+
       <button  hidden="hidden" value="incognito">Configure incognito window settings.</button>
     </form>
   </div>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/sendControll.js"></script>
   <script src="./proxy_form_controller.js"></script>
   <script src="./popup.js"></script>
+  
 </body>
 </html>

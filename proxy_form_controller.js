@@ -1,29 +1,4 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-/**
- * @fileoverview This file implements the ProxyFormController class, which
- * wraps a form element with logic that enables implementation of proxy
- * settings.
- *
- * @author mkwst@google.com (Mike West)
- */
-
-/**
- * Wraps the proxy configuration form, binding proper handlers to its various
- * `change`, `click`, etc. events in order to take appropriate action in
- * response to user events.
- *
- * @param {string} id The form's DOM ID.
- * @constructor
- */
 var ProxyFormController = function(id) {
-  /**
-   * The wrapped form element
-   * @type {Node}
-   * @private
-   */
   this.form_ = document.getElementById(id);
 
   // Throw an error if the element either doesn't exist, or isn't a form.
@@ -452,6 +427,7 @@ ProxyFormController.prototype = {
    * @private
    */
   changeActive_: function(fieldset) {
+
     for (var i = 0; i < this.configGroups_.length; i++) {
       var el = this.configGroups_[i];
       var radio = el.querySelector("input[type='radio']");
@@ -462,6 +438,7 @@ ProxyFormController.prototype = {
         el.classList.remove('active');
       }
     }
+
     this.recalcDisabledInputs_();
   },
 
