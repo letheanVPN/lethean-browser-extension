@@ -548,11 +548,21 @@ ProxyFormController.prototype = {
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
     setTimeout(function() {
+        success.classList.remove('visible');
+        success.classList.remove('overlay');
+        success.setAttribute('hidden', 'hidden');
+    }, 4000);
+    
+    // -- Laion see why the windows reset when open
+
+    /*
+    setTimeout(function() {
       if (close === false)
         success.classList.remove('visible');
       else
         window.close();
     }, 4000);
+    */
   },
 
 
