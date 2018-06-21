@@ -1,10 +1,10 @@
 {
   "extName":  {
-    "message": "Proxy Extension API Sample",
+    "message": "Intense Coin",
     "description": "The extension name."
   },
   "extDescription": {
-    "message": "Set Chrome-specific proxies; a demonstration of Chrome's Proxy API",
+    "message": "Use to change the browser proxy",
     "description": "The extension description."
   },
   "headerDirectConnection": {
@@ -28,17 +28,30 @@
     "description": "Error message, displayed when failing to set incognito proxy settings."
   },
   "successfullySetProxy": {
-    "message": "Your proxy settings have been saved successfully; this window will close automagically. Have a nice day!",
+    "message": "Your proxy settings have been saved successfully; Have a nice day!",
     "description": "Success message, displayed after proxy settings have been written."
   },
+  "errorPopupTitle": {
+    "message": "Cold not stablish Connection to proxy",
+    "description": "Error message used as popup title."
+  },
+
+  /*
   "errorPopupTitle": {
     "message": "Error: $1",
     "description": "Error message used as popup title."
   },
+  */
+  "errorProxyError": {
+    "message": "Cold not stablish Connection to proxy. Make sure the service is running withing your wallet!",
+    "description": "Error message displayed in popup when an error occurs."
+  },
+  /*
   "errorProxyError": {
     "message": "ProxyError: $1.",
     "description": "Error message displayed in popup when an error occurs."
   },
+  */
   "errorProxyDetailedError": {
     "message": "ProxyError: $1. $2.",
     "description": "Error message displayed in popup when an error occurs."

@@ -95,3 +95,13 @@ button {
   opacity: 1;
   transform: scale(1);
 }
+
+.proxyFailMsg{
+  color: #fff;
+  font-size: 17px;
+  margin-top: 30px;
+}
+
+.nonDisplay{
+  display: none;
+}

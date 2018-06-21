@@ -28,7 +28,7 @@
             <input type="text" name="proxyHostHttp" id="proxyHostHttp" value="localhost">
             <br />
             <label for="proxyPortHttp">Port</label>
-            <input type="text" name="proxyPortHttp" id="proxyPortHttp" class="port" value="6666">
+            <input type="text" name="proxyPortHttp" id="proxyPortHttp" class="port" value="6667">
             <br />
             <input type="checkbox" name="singleProxyForEverything" id="singleProxyForEverything">
             <label for="singleProxyForEverything">Use the same proxy server for all protocols</label>
@@ -44,7 +44,7 @@
             <input type="text" name="proxyHostHttps" id="proxyHostHttps" value="localhost">
 
             <label for="proxyPortHttps">Port</label>
-            <input type="text" name="proxyPortHttps" id="proxyPortHttps" class="port" value="6666">
+            <input type="text" name="proxyPortHttps" id="proxyPortHttps" class="port" value="6667">
           </fieldset>
           <fieldset  hidden="hidden">
             <legend>FTP</legend>
@@ -80,7 +80,7 @@
         </section>
       </fieldset>
 
-      <fieldset id="system" style="margin: 30px 0px 0px 0px;">
+      <fieldset id="system" style="margin: 30px 0px 0px 0px; display: none;">
         <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin: 160px -35px; opacity: 0">
         <label for="proxyTypeSystem">
           <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  cursor: pointer; height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin: 160px -35px;">

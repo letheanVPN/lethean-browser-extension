@@ -1,3 +1,5 @@
+
+
 var ProxyFormController = function(id) {
   this.form_ = document.getElementById(id);
 
@@ -510,8 +512,9 @@ ProxyFormController.prototype = {
           {value: this.config_.incognito, scope: 'incognito_persistent'},
           this.callbackForIncognitoSettings_.bind(this));
     } else {
+      console.log(this.config_ == null);
       ProxyFormController.setPersistedSettings(this.config_);
-      this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'));
+      this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
     }
   },
 
@@ -528,7 +531,7 @@ ProxyFormController.prototype = {
     }
     ProxyFormController.setPersistedSettings(this.config_);
     this.generateAlert_(
-        chrome.i18n.getMessage('successfullySetProxy'));
+        chrome.i18n.getMessage('successfullySetProxy'), true);
   },
 
   /**
@@ -541,21 +544,28 @@ ProxyFormController.prototype = {
    */
   generateAlert_: function(msg, close) {
     var success = document.createElement('div');
-    success.classList.add('overlay');
+    if(close == true){
+      success.classList.add('overlay');
+    }else{
+      success.removeAttribute('hidden', 'hidden');
+      success.classList.add('proxyFailMsg');
+      success.classList.remove('overlay');
+    }
     success.setAttribute('role', 'alert');
     success.textContent = msg;
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
     setTimeout(function() {
-        success.classList.remove('visible');
+        if(close == true){
+          success.setAttribute('hidden', 'hidden');
+        }
         success.classList.remove('overlay');
-        success.setAttribute('hidden', 'hidden');
+        
     }, 4000);
-    
-    // -- Laion see why the windows reset when open
 
-    /*
+
+    /* remove by Laion
     setTimeout(function() {
       if (close === false)
         success.classList.remove('visible');
@@ -768,8 +778,8 @@ ProxyFormController.prototype = {
   handleProxyErrorHandlerResponse_: function(response) {
     if (response.result !== null) {
       var error = JSON.parse(response.result);
-      console.error(error);
-      // TODO(mkwst): Do something more interesting
+      document.getElementById('fixed_servers').style.setProperty('display', 'none');
+      document.getElementById('system').style.removeProperty('display');
       this.generateAlert_(
           chrome.i18n.getMessage(
               error.details ? 'errorProxyDetailedError' : 'errorProxyError',
