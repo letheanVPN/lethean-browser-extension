@@ -518,7 +518,7 @@ ProxyFormController.prototype = {
           this.callbackForIncognitoSettings_.bind(this));
     } else {
       ProxyFormController.setPersistedSettings(this.config_);
-      this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
+      //this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
     }
   },
 
@@ -534,8 +534,7 @@ ProxyFormController.prototype = {
       return;
     }
     ProxyFormController.setPersistedSettings(this.config_);
-    this.generateAlert_(
-        chrome.i18n.getMessage('successfullySetProxy'), true);
+    //this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
   },
 
   /**
