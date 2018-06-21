@@ -1,4 +1,9 @@
-
+if(window.localStorage['proxyConfig'] != undefined && window.localStorage['proxyConfig'][20] == "f"){
+  document.getElementById('fixed_servers').style.setProperty('display', 'none');
+  document.getElementById('system').style.removeProperty('display');
+}else if(window.localStorage['proxyConfig'] != undefined){
+  
+}
 
 var ProxyFormController = function(id) {
   this.form_ = document.getElementById(id);
@@ -78,7 +83,7 @@ ProxyFormController.WrappedProxyConfig;
  */
 ProxyFormController.getPersistedSettings = function() {
   var result = null;
-  if (window.localStorage['proxyConfig'] !== undefined)
+  if (window.localStorage['proxyConfig'] !== undefined)   
     result = JSON.parse(window.localStorage['proxyConfig']);
   return result ? result : null;
 };
@@ -512,7 +517,6 @@ ProxyFormController.prototype = {
           {value: this.config_.incognito, scope: 'incognito_persistent'},
           this.callbackForIncognitoSettings_.bind(this));
     } else {
-      console.log(this.config_ == null);
       ProxyFormController.setPersistedSettings(this.config_);
       this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
     }

@@ -15,7 +15,5 @@ $(document).ready(function() {
 		$("#fixed_servers").hide();
 		$("#system").show();
 	});
-	console.log(localStorage["proxyOn"]);
-	console.log("teste");
 });
 

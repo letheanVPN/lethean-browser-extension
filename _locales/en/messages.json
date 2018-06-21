@@ -32,7 +32,7 @@
     "description": "Success message, displayed after proxy settings have been written."
   },
   "errorPopupTitle": {
-    "message": "Cold not stablish Connection to proxy",
+    "message": "Could not establish Connection to proxy",
     "description": "Error message used as popup title."
   },
 
@@ -43,7 +43,7 @@
   },
   */
   "errorProxyError": {
-    "message": "Cold not stablish Connection to proxy. Make sure the service is running withing your wallet!",
+    "message": "Could not establish Connection to proxy. Make sure the service is running within your wallet!",
     "description": "Error message displayed in popup when an error occurs."
   },
   /*
