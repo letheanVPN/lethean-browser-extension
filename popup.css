@@ -1,6 +1,6 @@
 body {
   padding: 0px 0px 0px 0px;
-  width: 300px;
+  width: 270px;
   height: 400px;
   background-image: url(images/background.png);
   background-color: #412d57;
@@ -98,8 +98,8 @@ button {
 
 .proxyFailMsg{
   color: #fff;
-  font-size: 17px;
-  margin-top: 30px;
+  font-size: 13px;
+  margin-top: -200px;
 }
 
 .nonDisplay{

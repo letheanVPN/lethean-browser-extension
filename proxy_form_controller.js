@@ -1,6 +1,7 @@
 if(window.localStorage['proxyConfig'] != undefined && window.localStorage['proxyConfig'][20] == "f"){
   document.getElementById('fixed_servers').style.setProperty('display', 'none');
   document.getElementById('system').style.removeProperty('display');
+  document.getElementById('settingsConfig').style.setProperty('display', 'none');
 }else if(window.localStorage['proxyConfig'] != undefined){
   
 }

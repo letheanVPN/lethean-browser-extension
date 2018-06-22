@@ -5,33 +5,42 @@
   <link href="./popup.css" type="text/css" rel="stylesheet">
 </head>
 <body>
+  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: 10px; margin-left: 110px;" />
   <h1>Intense Coin</h1>
+
   <div role="main">
     <form id="proxyForm" name="proxyForm">
       
       <fieldset id="fixed_servers">
-        <div style="font-size: 22px; color: #fff; width: 100%;">Welcome to<br /> Intense VPN</div>
-        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 150px; height: 150px; position: absolute; z-index: 9; margin: 20px -65px; opacity: 0;">
+        <div style="font-size: 22px; color: #fff; width: 100%; margin-top: 30px;">Welcome to<br /> Intense VPN</div>
+        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 150px; height: 150px; position: absolute; z-index: 9; margin-top: 50px; margin-left: -75px; opacity: 0;">
         <label for="proxyTypeManual">
-          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; cursor: pointer; background-repeat: no-repeat; position: absolute; z-index: 1; margin: 20px -65px;">
+          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; cursor: pointer; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
         </label>        
-        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; position: absolute; margin: 180px -10px;">Click to Connect</div>
+        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; margin-top: 220px;">Click to Connect</div>
 
-        <section hidden="hidden">
+        <section>
           <fieldset>
             <legend  hidden="hidden">HTTP</legend>
-            <label for="proxyHostHttp">Host</label>
+            
+            
             <select id="proxySchemeHttp" name="proxySchemeHttp"  hidden="hidden">
               <option selected value="http">http://</option>
               <option value="https">https://</option>
             </select>
-            <input type="text" name="proxyHostHttp" id="proxyHostHttp" value="localhost">
-            <br />
-            <label for="proxyPortHttp">Port</label>
-            <input type="text" name="proxyPortHttp" id="proxyPortHttp" class="port" value="6666">
-            <br />
-            <input type="checkbox" name="singleProxyForEverything" id="singleProxyForEverything">
-            <label for="singleProxyForEverything">Use the same proxy server for all protocols</label>
+          
+            <div id="proxyHost" style="width: 100%; height: 70px; background-color: #2c2136; position: absolute; margin-top: -331px; margin-left: -30px; padding-top: 25px; display: none;">
+              <label for="proxyHostHttp">Host</label>
+              <input type="text" name="proxyHostHttp" id="proxyHostHttp" style="width: 100px;" value="localhost">
+       
+              <label for="proxyPortHttp">Port</label>
+              <input type="text" name="proxyPortHttp" id="proxyPortHttp" style="width: 35px;" class="port" value="6666">
+            </div>
+       
+            
+            <input type="checkbox" name="singleProxyForEverything" id="singleProxyForEverything" hidden="hidden">
+            <label for="singleProxyForEverything" hidden="hidden">Use the same proxy server for all protocols</label>
+          
           </fieldset>
           <fieldset  hidden="hidden">
             <legend>HTTPS</legend>
@@ -81,12 +90,13 @@
       </fieldset>
 
       <fieldset id="system" style="margin: 30px 0px 0px 0px; display: none;">
-        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin: 160px -35px; opacity: 0">
+        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin-top: 190px; margin-left: -40.5px; opacity: 0">
         <label for="proxyTypeSystem">
-          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  cursor: pointer; height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin: 160px -35px;">
+          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  cursor: pointer; height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
         </label>
-        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">Connected</div>
-        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; position: absolute; margin: 230px -10px">Click to disconnect</div>
+        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">CONNECTED</div>
+
+        <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; margin-top: 260px;">DISCONNECT</div>
       </fieldset>
 
       <button  hidden="hidden" value="incognito">Configure incognito window settings.</button>
