@@ -13,13 +13,13 @@
       
       <fieldset id="fixed_servers">
         <div style="font-size: 22px; color: #fff; width: 100%; margin-top: 30px;">Welcome to<br /> Intense VPN</div>
-        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 150px; height: 150px; position: absolute; z-index: 9; margin-top: 50px; margin-left: -75px; opacity: 0;">
+        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 150px; height: 150px; position: absolute; z-index: 9; margin-top: 50px; margin-left: -75px; opacity: 0; cursor: pointer; ">
         <label for="proxyTypeManual">
-          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; cursor: pointer; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
+          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
         </label>        
         <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%; margin-top: 220px;">Click to Connect</div>
 
-        <section>
+        <section class="single">
           <fieldset>
             <legend  hidden="hidden">HTTP</legend>
             
@@ -50,10 +50,10 @@
               <option value="https">https://</option>
               <option value="socks4">socks4://</option>
             </select>
-            <input type="text" name="proxyHostHttps" id="proxyHostHttps" value="localhost">
+            <input type="text" name="proxyHostHttps" id="proxyHostHttps">
 
             <label for="proxyPortHttps">Port</label>
-            <input type="text" name="proxyPortHttps" id="proxyPortHttps" class="port" value="6666">
+            <input type="text" name="proxyPortHttps" id="proxyPortHttps" class="port">
           </fieldset>
           <fieldset  hidden="hidden">
             <legend>FTP</legend>
@@ -89,10 +89,10 @@
         </section>
       </fieldset>
 
-      <fieldset id="system" style="margin: 30px 0px 0px 0px; display: none;">
-        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin-top: 190px; margin-left: -40.5px; opacity: 0">
+      <fieldset id="system" style="margin: 30px 0px 0px 0px;" hidden="hidden">
+        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin-top: 190px; margin-left: -40.5px; opacity: 0; cursor: pointer; ">
         <label for="proxyTypeSystem">
-          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  cursor: pointer; height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
+          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
         </label>
         <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">CONNECTED</div>
 

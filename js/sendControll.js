@@ -1,25 +1,35 @@
+
 $(document).ready(function() {
 
-    // make following action fire when radio button changes
-    $('input[type=radio]').change(function(){
-      // find the submit button and click it on the previous action
-      $('input[type=submit]').click()
-    });
-
-	$('input[id=proxyTypeSystem]').click(function(){
-		$("#system").hide();
-		$("#fixed_servers").show();
+	if(window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s"){
+		$("#system").attr("hidden", "hidden");
+		$("#fixed_servers").removeAttr("hidden");
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
-		$("#settingsConfig").show();
+		$("#settingsConfig").removeAttr("hidden");
+		
+
+	}else{
+		$("#fixed_servers").attr("hidden", "hidden");
+		$("#system").removeAttr("hidden");
+		$("#settingsConfig").attr("hidden", "hidden");
+	}
+
+	$('input[id=proxyTypeSystem]').click(function(){
+
+		$("#system").attr("hidden", "hidden");
+		$("#fixed_servers").removeAttr("hidden");
+		$(".proxyFailMsg").removeClass('visible');
+		$(".proxyFailMsg").addClass('nonDisplay');
+		$("#settingsConfig").removeAttr("hidden");
 	});
 	$('input[id=proxyTypeManual]').click(function(){
-		$("#fixed_servers").hide();
-		$("#system").show();
-		$("#settingsConfig").hide();
+		$("#fixed_servers").attr("hidden", "hidden");
+		$("#system").removeAttr("hidden");
+		$("#settingsConfig").attr("hidden", "hidden");
 	});
 
-	flag = 2
+	var flag = 2
 	$("#settingsConfig").click(function(){
 		if(flag == 2){
 			$("#proxyHost").show();
@@ -28,6 +38,14 @@ $(document).ready(function() {
 			$("#proxyHost").hide();
 			flag = 2;
 		}
-	})
-});
+	});
 
+	// make following action fire when radio button changes
+    $('input[type=radio]').click(function(){
+    	setTimeout(function(){
+		  $('input[type=submit]').click();
+		}, 300);
+      	
+    });
+
+});
