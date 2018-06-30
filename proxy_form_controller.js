@@ -358,12 +358,14 @@ ProxyFormController.prototype = {
    */
   dispatchFormClick_: function(e) {
     var t = e.target;
-    console.log('call');
+	
+	console.log('dispatchFormClick_ ' + t);
+    
     // Case 1: "Apply"
     if (t.nodeName === 'INPUT' && t.getAttribute('type') === 'submit') {
       var x = document.getElementById('proxyHostHttp').value.length;
       var y = document.getElementById('proxyPortHttp').value.length;
-      console.log(x);
+      console.log("Length X " + x);
       if(x != "Default text" && x > 0 && y != "Default text" && y > 0){
         if(window.localStorage['proxyConfig'][20] == undefined || window.localStorage['proxyConfig'][20] != "f"){
           console.log('start');
@@ -402,6 +404,9 @@ ProxyFormController.prototype = {
    * @private
    */
   changeActive_: function(fieldset) {
+	console.log("Setting active ");
+	console.log(fieldset);
+	  
     for (var i = 0; i < this.configGroups_.length; i++) {
       var el = this.configGroups_[i];
       var radio = el.querySelector("input[type='radio']");
@@ -481,6 +486,10 @@ ProxyFormController.prototype = {
   callbackForRegularSettings_: function() {
     if (chrome.runtime.lastError) {
       this.generateAlert_(chrome.i18n.getMessage('errorSettingRegularProxy'), true);
+	  
+	  // trigger click on disconnect button
+	  $("#proxyTypeSystem").click();
+      
       return;
     }
     if (this.config_.incognito) {
@@ -517,6 +526,10 @@ ProxyFormController.prototype = {
    * @private
    */
   generateAlert_: function(msg, close) {
+	// delete all existing and opened alerts
+	$('.overlay').remove();
+
+	  
     var success = document.createElement('div');
     if(close == true){
       success.classList.add('overlay');
@@ -655,13 +668,14 @@ ProxyFormController.prototype = {
    */
   recalcFormValues_: function(c) {
     
-    if(c.mode == 'system'){
+    if(c.mode == 'system') {
       c.mode = 'fixed_servers';
-    }else{
+    }
+	else {
       c.mode = 'system';
     }
     
-    console.log(c.mode);
+    console.log("Mode " + c.mode);
     /*
     // Normalize `auto_detect`
     if (c.mode === 'auto_detect')

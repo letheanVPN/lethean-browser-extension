@@ -1,29 +1,28 @@
-
 $(document).ready(function() {
-
-	if(window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s"){
+	console.log("SendControl Ready");
+	
+	if(window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s") {
 		$("#system").attr("hidden", "hidden");
 		$("#fixed_servers").removeAttr("hidden");
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
 		$("#settingsConfig").removeAttr("hidden");
-		
-
-	}else{
+	}
+	else{
 		$("#fixed_servers").attr("hidden", "hidden");
 		$("#system").removeAttr("hidden");
 		$("#settingsConfig").attr("hidden", "hidden");
 	}
 
-	$('input[id=proxyTypeSystem]').click(function(){
-
+	$('input[id=proxyTypeSystem]').click(function() {
 		$("#system").attr("hidden", "hidden");
 		$("#fixed_servers").removeAttr("hidden");
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
 		$("#settingsConfig").removeAttr("hidden");
 	});
-	$('input[id=proxyTypeManual]').click(function(){
+	
+	$('input[id=proxyTypeManual]').click(function() {
 		$("#fixed_servers").attr("hidden", "hidden");
 		$("#system").removeAttr("hidden");
 		$("#settingsConfig").attr("hidden", "hidden");
