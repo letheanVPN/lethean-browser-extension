@@ -536,7 +536,6 @@ ProxyFormController.prototype = {
     }else{
       success.removeAttribute('hidden', 'hidden');
       success.classList.add('proxyFailMsg');
-      success.classList.remove('overlay');
     }
     success.setAttribute('role', 'alert');
     success.textContent = msg;
@@ -548,7 +547,6 @@ ProxyFormController.prototype = {
           success.setAttribute('hidden', 'hidden');
         }
         success.classList.remove('overlay');
-        
     }, 4000);
 
   },
