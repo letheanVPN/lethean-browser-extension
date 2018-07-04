@@ -1,5 +1,4 @@
 $(document).ready(function() {
-	console.log("SendControl Ready");
 	
 	if(window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s") {
 		$("#system").attr("hidden", "hidden");
@@ -7,6 +6,8 @@ $(document).ready(function() {
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
 		$("#settingsConfig").removeAttr("hidden");
+		document.getElementById('proxyHostHttp').value = "localhost";
+        document.getElementById('proxyPortHttp').value = "6666"
 	}
 	else{
 		$("#fixed_servers").attr("hidden", "hidden");
@@ -30,6 +31,7 @@ $(document).ready(function() {
 
 	var flag = 2
 	$("#settingsConfig").click(function(){
+
 		if(flag == 2){
 			$("#proxyHost").show();
 			flag = 1;
