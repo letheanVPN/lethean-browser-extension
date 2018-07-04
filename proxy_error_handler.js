@@ -17,12 +17,15 @@
  *
  * @constructor
  */
+
+
 function ProxyErrorHandler() {
   // Handle proxy error events.
   chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
 
   // Handle message events from popup.
   chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
+  setTimeout(function() { ProxyErrorHandler.ErrorDetails; }, 5);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
