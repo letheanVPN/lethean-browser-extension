@@ -542,6 +542,7 @@ ProxyFormController.prototype = {
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
+    setTimeout(function() { ProxyErrorHandler.ErrorDetails; }, 5);
     setTimeout(function() {
         if(close == true){
           success.setAttribute('hidden', 'hidden');
