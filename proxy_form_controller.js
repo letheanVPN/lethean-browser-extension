@@ -24,6 +24,7 @@ var ProxyFormController = function(id) {
   this.handleProxyErrors_();
 };
 
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -135,8 +136,9 @@ ProxyFormController.prototype = {
    */
   get singleProxy() {
     //document.getElementById('singleProxyForEverything').checked = true;
-    var checkbox = document.getElementById('singleProxyForEverything');
-    return checkbox.checked ? this.httpProxy : null;
+    //var checkbox = document.getElementById('singleProxyForEverything');
+    return this.httpProxy
+    //return checkbox.checked ? this.httpProxy : null;
   },
 
 
@@ -145,19 +147,6 @@ ProxyFormController.prototype = {
    * @param {?ProxyServer} data An object containing the proxy server host,
    *     port, and scheme. If null, the single proxy checkbox will be unchecked.
    */
-  set singleProxy(data) {
-    //document.getElementById('singleProxyForEverything').checked = true;
-    var checkbox = document.getElementById('singleProxyForEverything');
-    checkbox.checked = !!data;
-
-    if (data)
-      this.httpProxy = data;
-
-    if (checkbox.checked)
-      checkbox.parentNode.parentNode.classList.add('single');
-    else
-      checkbox.parentNode.parentNode.classList.remove('single');
-  },
 
   /**
    * @return {?ProxyServer} An object containing the proxy server host, port
@@ -363,21 +352,10 @@ ProxyFormController.prototype = {
     
     // Case 1: "Apply"
     if (t.nodeName === 'INPUT' && t.getAttribute('type') === 'submit') {
-      var x = document.getElementById('proxyHostHttp').value.length;
-      var y = document.getElementById('proxyPortHttp').value.length;
-      console.log("Length X " + x);
-      if(x != "Default text" && x > 0 && y != "Default text" && y > 0){
-        if(window.localStorage['proxyConfig'][20] == undefined || window.localStorage['proxyConfig'][20] != "f"){
-          console.log('start');
-          document.getElementById('singleProxyForEverything').checked = true;
-        }
-      }
-
       while (t && (t.nodeName !== 'FIELDSET' || t.parentNode.nodeName !== 'FORM')) {
         t = t.parentNode;
       }
       if (t) {
-        this.changeActive_(t);
         return this.applyChanges_(e);
       }
 
@@ -389,7 +367,6 @@ ProxyFormController.prototype = {
       }
       if (t) {
         this.changeActive_(t);
-        //return false;
       }
     }
     
@@ -404,13 +381,9 @@ ProxyFormController.prototype = {
    * @private
    */
   changeActive_: function(fieldset) {
-	console.log("Setting active ");
-	console.log(fieldset);
-	  
     for (var i = 0; i < this.configGroups_.length; i++) {
       var el = this.configGroups_[i];
       var radio = el.querySelector("input[type='radio']");
-      //var checkbox = el.querySelector("#singleProxyForEverything");
       if (el === fieldset) {
         el.classList.add('active');
         radio.checked = true;
@@ -439,6 +412,8 @@ ProxyFormController.prototype = {
       if (el.classList.contains('active')) {
         for (j = 0; j < inputs.length; j++) {
           inputs[j].removeAttribute('disabled');
+          console.log(inputs[j].id)
+          
         }
       } else {
         for (j = 0; j < inputs.length; j++) {
@@ -498,7 +473,6 @@ ProxyFormController.prototype = {
           this.callbackForIncognitoSettings_.bind(this));
     } else {
       ProxyFormController.setPersistedSettings(this.config_);
-      //this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
     }
   },
 
@@ -514,7 +488,6 @@ ProxyFormController.prototype = {
       return;
     }
     ProxyFormController.setPersistedSettings(this.config_);
-    //this.generateAlert_(chrome.i18n.getMessage('successfullySetProxy'), true);
   },
 
   /**
@@ -542,7 +515,7 @@ ProxyFormController.prototype = {
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
-    setTimeout(function() { ProxyErrorHandler.ErrorDetails; }, 5);
+
     setTimeout(function() {
         if(close == true){
           success.setAttribute('hidden', 'hidden');
@@ -568,20 +541,10 @@ ProxyFormController.prototype = {
         return {mode: 'system'};
       case ProxyFormController.ProxyTypes.FIXED:
         var config = {mode: 'fixed_servers'};
-        if (this.singleProxy) {
           config.rules = {
             singleProxy: this.singleProxy,
             bypassList: this.bypassList
           };
-        } else {
-          config.rules = {
-            proxyForHttp: this.httpProxy,
-            proxyForHttps: this.httpsProxy,
-            proxyForFtp: this.ftpProxy,
-            fallbackProxy: this.fallbackProxy,
-            bypassList: this.bypassList
-          };
-        }
         return config;
     }
   },
@@ -597,13 +560,8 @@ ProxyFormController.prototype = {
    */
   toggleSingleProxyConfig_: function(e) {
     var checkbox = e.target;
-    if (checkbox.nodeName === 'INPUT' &&
-        checkbox.getAttribute('type') === 'checkbox') {
-      if (checkbox.checked)
-        checkbox.parentNode.parentNode.classList.add('single');
-      else
-        checkbox.parentNode.parentNode.classList.remove('single');
-    }
+
+    checkbox.parentNode.parentNode.classList.add('single');
   },
 
 
@@ -667,34 +625,15 @@ ProxyFormController.prototype = {
    */
   recalcFormValues_: function(c) {
     
-    if(c.mode == 'system') {
-      c.mode = 'fixed_servers';
-    }
-	else {
-      c.mode = 'system';
-    }
-    
     console.log("Mode " + c.mode);
-    /*
-    // Normalize `auto_detect`
-    if (c.mode === 'auto_detect')
-      c.mode = 'script_pac';
-    */
     // Activate one of the groups, based on `mode`.
     this.changeActive_(document.getElementById(c.mode));
 
     // Evaluate the `rules`
     if (c.rules) {
       var rules = c.rules;
-      if (rules.singleProxy) {
-        this.singleProxy = rules.singleProxy;
-      } else {
-        this.singleProxy = null;
-        this.httpProxy = rules.proxyForHttp;
-        this.httpsProxy = rules.proxyForHttps;
-        this.ftpProxy = rules.proxyForFtp;
-        this.fallbackProxy = rules.fallbackProxy;
-      }
+      //if (rules.singleProxy) {
+      this.singleProxy = rules.singleProxy;
       this.bypassList = rules.bypassList;
     } else {
       this.singleProxy = null;
