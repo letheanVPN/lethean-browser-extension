@@ -107,7 +107,7 @@ ProxyErrorHandler.prototype = {
       });
     if(window.localStorage['proxyConfig'][20] == "f"){
       var GREEN = [124, 252, 0, 255];
-      chrome.browserAction.setBadgeText({text: '0'});
+      chrome.browserAction.setBadgeText({text: 'o'});
       chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
       chrome.browserAction.setTitle({
         title: chrome.i18n.getMessage('connectedPopupTitle')
