@@ -21,6 +21,8 @@ $(document).ready(function() {
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
 		$("#settingsConfig").removeAttr("hidden");
+		document.getElementById('proxyHostHttp').value = "localhost";
+        document.getElementById('proxyPortHttp').value = "6666"
 	});
 	
 	$('input[id=proxyTypeManual]').click(function() {
