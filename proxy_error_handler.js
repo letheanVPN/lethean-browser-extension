@@ -20,12 +20,26 @@
 
 
 function ProxyErrorHandler() {
-  // Handle proxy error events.
-  chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
 
-  // Handle message events from popup.
-  chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
-  
+  function checkError(){
+      var url = "https://google.com"
+      var xmlhttp = new XMLHttpRequest();
+
+      xmlGEOhttp.onreadystatechange=function() {
+          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            // Handle message events from popup.
+            chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
+          }else{
+            // Handle proxy error events.
+            chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
+          }
+      }
+
+      xmlhttp.open("GET", url, true);
+      xmlhttp.setRequestHeader("Access-Control-Allow-Origin","*")
+      xmlhttp.send();
+  }
+  checkError()
 };
 
 ///////////////////////////////////////////////////////////////////////////////
