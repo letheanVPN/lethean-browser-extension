@@ -18,14 +18,12 @@
  * @constructor
  */
 
-
 function ProxyErrorHandler() {
-  // Handle proxy error events.
-  chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
+    // Handle message events from popup.
+    chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
 
-  // Handle message events from popup.
-  chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
-  
+    // Handle proxy error events.
+    chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +58,7 @@ ProxyErrorHandler.prototype = {
     } else if (request.type === 'clearError') {
       this.clearErrorDetails();
       sendResponse({result: true});
-    }
+    } 
   },
 
   /**
@@ -71,19 +69,37 @@ ProxyErrorHandler.prototype = {
    * @private
    */
   handleError_: function(details) {
-    var RED = [255, 0, 0, 255];
-    var YELLOW = [255, 205, 0, 255];
+    var xhttp = new XMLHttpRequest();
+    xhttp.addEventListener("error", transferFailed );
+    xhttp.addEventListener("load", transferComplete);
+    xhttp.open("GET", "https://geoip.nekudo.com/api/", true);
+    xhttp.send();
 
-    // Badge the popup icon.
-    var color = details.fatal ? RED : YELLOW;
-    chrome.browserAction.setBadgeBackgroundColor({color: color});
-    chrome.browserAction.setBadgeText({text: 'X'});
-    chrome.browserAction.setTitle({
-      title: chrome.i18n.getMessage('errorPopupTitle', details.error)
-    });
+    function transferFailed(){
+      var RED = [255, 0, 0, 255];
+      var YELLOW = [255, 205, 0, 255];
 
-    // Store the error for display in the popup.
-    this.lastError_ = JSON.stringify(details);
+      // Badge the popup icon.
+      var color = details.fatal ? RED : YELLOW;
+      chrome.browserAction.setBadgeBackgroundColor({color: color});
+      chrome.browserAction.setBadgeText({text: 'X'});
+      chrome.browserAction.setTitle({
+        title: chrome.i18n.getMessage('errorPopupTitle', details.error)
+      });
+    }
+
+      // Store the error for display in the popup.
+      this.lastError_ = JSON.stringify(details);
+
+    function transferComplete(){
+      document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
+      var GREEN = [124, 252, 0, 255];
+      chrome.browserAction.setBadgeText({text: 'o'});
+      chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+      chrome.browserAction.setTitle({
+        title: chrome.i18n.getMessage('connectedPopupTitle')
+      });
+    }
   },
 
 

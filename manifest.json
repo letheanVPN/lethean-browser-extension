@@ -21,7 +21,8 @@
     ]
   },
   "permissions": [
-    "proxy"
+    "proxy",
+    "https://geoip.nekudo.com/api/"
   ],
   "manifest_version": 2
 }
