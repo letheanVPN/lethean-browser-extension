@@ -1,3 +1,36 @@
+function getOnline(){
+    setTimeout(function(){
+    var url = "https://geoip.nekudo.com/api/"
+    var xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+              chrome.browserAction.setBadgeText({text: ''});
+              chrome.browserAction.setTitle({
+              title: chrome.i18n.getMessage('extDescription')
+            });
+          if(window.localStorage['proxyConfig'][20] == "f"){
+            var GREEN = [124, 252, 0, 255];
+            chrome.browserAction.setBadgeText({text: 'o'});
+            chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+            chrome.browserAction.setTitle({
+              title: chrome.i18n.getMessage('connectedPopupTitle')
+            });
+            document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
+          }
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+    xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+    xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+    xmlhttp.send();
+    getOnline();
+  },5000);
+}
+
+getOnline();
+
 var ProxyFormController = function(id) {
 
   this.form_ = document.getElementById(id);
@@ -504,6 +537,7 @@ ProxyFormController.prototype = {
 
 	  
     var success = document.createElement('div');
+    success.setAttribute('id','proxyFail');
     if(close == true){
       success.classList.add('overlay');
     }else{
@@ -672,9 +706,9 @@ ProxyFormController.prototype = {
    * @private
    */
   handleProxyErrors_: function() {
-    chrome.extension.sendRequest(
-        {type: 'getError'},
-        this.handleProxyErrorHandlerResponse_.bind(this));
+   chrome.extension.sendRequest(
+    {type: 'getError'},
+    this.handleProxyErrorHandlerResponse_.bind(this));
   },
 
   /**
@@ -684,6 +718,7 @@ ProxyFormController.prototype = {
    *     popup's request.
    */
   handleProxyErrorHandlerResponse_: function(response) {
+
     if (response.result !== null) {
       var error = JSON.parse(response.result);
       this.generateAlert_(
