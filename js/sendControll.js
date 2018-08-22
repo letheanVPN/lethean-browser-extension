@@ -23,6 +23,8 @@ $(document).ready(function() {
 		$("#settingsConfig").removeAttr("hidden");
 		document.getElementById('proxyHostHttp').value = "localhost";
         document.getElementById('proxyPortHttp').value = "6666"
+        document.getElementById("connectedMsg").innerText = "CONNECTED";
+        document.getElementById("tryAgainMsg").innerText = "DISCONNECT";
 	});
 	
 	$('input[id=proxyTypeManual]').click(function() {
@@ -46,7 +48,7 @@ $(document).ready(function() {
 	// make following action fire when radio button changes
     $('input[type=radio]').click(function(){
     	setTimeout(function(){
-		  $('input[type=submit]').click();
+		  $('button[type=submit]').click();
 		}, 300);
       	
     });
