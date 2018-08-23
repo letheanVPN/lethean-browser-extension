@@ -384,7 +384,7 @@ ProxyFormController.prototype = {
 	console.log('dispatchFormClick_ ' + t);
     
     // Case 1: "Apply"
-    if (t.nodeName === 'INPUT' && t.getAttribute('type') === 'submit') {
+    if (t.nodeName === 'BUTTON' && t.getAttribute('type') === 'submit') {
       while (t && (t.nodeName !== 'FIELDSET' || t.parentNode.nodeName !== 'FORM')) {
         t = t.parentNode;
       }
@@ -538,6 +538,7 @@ ProxyFormController.prototype = {
 	  
     var success = document.createElement('div');
     success.setAttribute('id','proxyFail');
+    
     if(close == true){
       success.classList.add('overlay');
     }else{
@@ -545,7 +546,10 @@ ProxyFormController.prototype = {
       success.classList.add('proxyFailMsg');
     }
     success.setAttribute('role', 'alert');
+    //msg = msg.replace(".", ".                                                                                                                                  ");
     success.textContent = msg;
+    document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
+    document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
