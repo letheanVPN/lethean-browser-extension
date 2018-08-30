@@ -40,7 +40,7 @@
     "description": "Error message used as popup title."
   },
   "errorProxyError": {
-    "message": "Could not establish Connection to proxy. Make sure the service is running within your wallet!",
+    "message": "Could not establish Connection to proxy.\n\n\n\n\n\n\n\nMake sure the service is running within your wallet!",
     "description": "Error message displayed in popup when an error occurs."
   },
   "errorProxyDetailedError": {
@@ -56,3 +56,5 @@
     "description": "Error message thrown when the given `id` isn't a form element."
   }
 }
+
+

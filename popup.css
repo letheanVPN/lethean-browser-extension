@@ -1,26 +1,26 @@
 body {
   padding: 0px 0px 0px 0px;
-  width: 270px;
-  height: 400px;
-  background-image: url(images/background.png);
-  background-color: #412d57;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center; 
-  text-align: center;
+  width: 140px;
+  background-color: #000;
 }
 
 h1 {
   color: #fff;
-  font: 18px Helvetica, sans-serif;
-  padding: 10px 10px 10px 10px;
+  font: 10px Helvetica, sans-serif;
+  padding: 3px;
   margin: -8px -8px 0px -8px;
-  background-color: #2c2136;
+  background-image: url(images/bg.png);
+  background-repeat: repeat;
+  border: 1px solid #fff;
   text-align: left;
 }
 
 fieldset{
   border: 0px;
+  width: 100%;
+  margin-left: -5px;
+  padding: 0px;
+  margin-top: 10px;
 }
 
 div[role='main'].incognito {
@@ -54,18 +54,12 @@ input.port {
 
 section label,
 section legend {
-  color:  #999;
   transition: color 0.5s ease;
 }
 
 .incognito section label,
 .incognito section legend {
   color:  #BBB;
-}
-
-input[type="submit"],
-button {
-  background: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
 }
 
 .overlay {
@@ -98,8 +92,10 @@ button {
 
 .proxyFailMsg{
   color: #fff;
-  font-size: 13px;
-  margin-top: -200px;
+  font-size: 10px;
+  margin-top: -193px;
+  text-align: center;
+  white-space: pre-wrap;
 }
 
 .nonDisplay{
