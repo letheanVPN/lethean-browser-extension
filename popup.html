@@ -4,16 +4,16 @@
   <title>Intense Coin</title>
   <link href="./popup.css" type="text/css" rel="stylesheet">
 </head>
-<body>
+<body style='height:250px;'>
   <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: -1px; margin-left: 127px;" />
-  <h1>LETHEAN VPN</h1>
+  <h1 style='padding-left: 10px;'>LETHEAN VPN</h1>
 
   <div role="main">
     <form id="proxyForm" name="proxyForm">
       
       <fieldset id="fixed_servers">
         <div style="font-size: 10px; color: #000; width: 155px; background-color: #fff; text-align: center; margin-left: -3px;">WELCOME TO LETHEAN VPN</div>
-        <img src="images/connected.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;">
+        <img src="images/connected.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left:-3px; margin-bottom:5px;">
         <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 156px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; margin-left: -3px; opacity: 0; cursor: pointer;">
         <label for="proxyTypeManual">
           <!--
@@ -94,9 +94,18 @@
 
       <fieldset id="system" hidden="hidden">
         <div id="connectedMsg" style="font-size: 10px; color: #000; width: 155px; background-color: #fff; text-align: center; margin-left: -3px;">CONNECTED</div>
-        <img id="imgError" src="images/error.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;" hidden="hidden">
-        <div id="dataValue" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px; background-color: #fff">
-          Dont have data
+        <img id="imgError" src="images/error.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left:-3px; margin-bottom:5px;" hidden="hidden">
+        <div id="dataValue" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px; background-color: #FFFFFFEE; padding-left: 10px;">
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>provider name</div>
+			<div style='font-size: 10px; line-height: 16px;' id='providerName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>plan</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serviceName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>time online</div>
+			<div style='font-size: 10px; line-height: 16px;' id='timeOnline'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>server ip</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serverIP'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>data transferred</div>
+			<div style='font-size: 10px; line-height: 16px;' id='dataTransferred'>[not available]</div>
         </div>
         <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 156px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; margin-left: -3px; opacity: 0; cursor: pointer;">
         <label for="proxyTypeSystem">
