@@ -19,6 +19,22 @@ function getOnline(){
             document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
           }
         }
+        else if (xmlhttp.status == 0) {
+          // show an alert and disconnect if we are connected and an error is found
+          
+          /*
+          console.log($('#system').is(":hidden"));
+          console.log($('#fixed_servers').is(":hidden"));
+          console.log($('#proxyFail').is(":hidden"));
+          */
+
+          if ($('#system').is(":hidden") == false) {
+            //console.log("Click the try Disconnect button");
+            //$('input[id=proxyTypeSystem]').click();
+            //$('button[type=submit]').click();
+            generateAlert("", false);
+          }
+        }
     }
     xmlhttp.open("GET", url, true);
     xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
@@ -532,37 +548,7 @@ ProxyFormController.prototype = {
    * @private
    */
   generateAlert_: function(msg, close) {
-	// delete all existing and opened alerts
-	$('.overlay').remove();
-
-	  
-    var success = document.createElement('div');
-    success.setAttribute('id','proxyFail');
-    
-    if(close == true){
-      success.classList.add('overlay');
-    }else{
-      success.removeAttribute('hidden', 'hidden');
-      success.classList.add('proxyFailMsg');
-    }
-    success.setAttribute('role', 'alert');
-    //msg = msg.replace(".", ".                                                                                                                                  ");
-    success.textContent = msg;
-    document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
-    document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
-    document.getElementById("imgError").removeAttribute('hidden', 'hidden');
-    document.getElementById("dataValue").setAttribute('hidden', 'hidden');
-    document.body.appendChild(success);
-
-    setTimeout(function() { success.classList.add('visible'); }, 10);
-
-    setTimeout(function() {
-        if(close == true){
-          success.setAttribute('hidden', 'hidden');
-        }
-        success.classList.remove('overlay');
-    }, 4000);
-
+    generateAlert(msg, close);
   },
 
 
@@ -735,3 +721,37 @@ ProxyFormController.prototype = {
     }
   }
 };
+
+
+function generateAlert(msg, close) {
+  // delete all existing and opened alerts
+  $('.overlay').remove();
+
+	  
+  var success = document.createElement('div');
+  success.setAttribute('id','proxyFail');
+  
+  if(close == true){
+    success.classList.add('overlay');
+  }else{
+    success.removeAttribute('hidden', 'hidden');
+    success.classList.add('proxyFailMsg');
+  }
+  success.setAttribute('role', 'alert');
+  //msg = msg.replace(".", ".                                                                                                                                  ");
+  success.textContent = msg;
+  document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
+  document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
+  document.getElementById("imgError").removeAttribute('hidden', 'hidden');
+  document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+  document.body.appendChild(success);
+
+  setTimeout(function() { success.classList.add('visible'); }, 10);
+
+  setTimeout(function() {
+      if(close == true){
+        success.setAttribute('hidden', 'hidden');
+      }
+      success.classList.remove('overlay');
+  }, 4000);
+}
