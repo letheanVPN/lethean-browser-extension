@@ -1,7 +1,7 @@
 {
   "name": "Lethean Proxy/VPN Extension",
   "version": "1.0",
-  "description": "The safest way to be online. Lethean Extension is your gateway to the Lethean Proxy/VPN network, a safe, private and secure platform where users sell their bandwidth for cryptocurrency. Visit https://lethean.io for more information.",
+  "description": "The safest way to be online. Lethean Extension is your gateway to the Lethean Proxy/VPN network, a safe, private and secure platform where users sell their bandwidth for cryptocurrency. You must download and run the Lethean wallet in order for the extension to work properly. Visit https://lethean.io for more information.",
   "default_locale": "en",
   "browser_action": {
     "default_icon": "icon16.png",
