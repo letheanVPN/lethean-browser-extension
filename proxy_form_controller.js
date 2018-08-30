@@ -550,6 +550,8 @@ ProxyFormController.prototype = {
     success.textContent = msg;
     document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
     document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
+    document.getElementById("imgError").removeAttribute('hidden', 'hidden');
+    document.getElementById("dataValue").setAttribute('hidden', 'hidden');
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);

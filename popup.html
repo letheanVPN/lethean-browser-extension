@@ -94,7 +94,10 @@
 
       <fieldset id="system" hidden="hidden">
         <div id="connectedMsg" style="font-size: 10px; color: #000; width: 155px; background-color: #fff; text-align: center; margin-left: -3px;">CONNECTED</div>
-        <img src="images/error.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;">
+        <img id="imgError" src="images/error.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;" hidden="hidden">
+        <div id="dataValue" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px; background-color: #fff">
+          Dont have data
+        </div>
         <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 156px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; margin-left: -3px; opacity: 0; cursor: pointer;">
         <label for="proxyTypeSystem">
           <!---
