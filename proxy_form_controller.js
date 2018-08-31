@@ -1,41 +1,57 @@
 
+var serverIP = "";
+
 // check if extension is online
 function getOnline() {
 	setTimeout(function() {
-		var url = "https://geoip.nekudo.com/api/"
+		var url = "https://geoip.nekudo.com/api/";
 		var xmlhttp = new XMLHttpRequest();
 
 		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState != 4) {
+				return;
+			}
+			
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				  chrome.browserAction.setBadgeText({text: ''});
-				  chrome.browserAction.setTitle({
-				  title: chrome.i18n.getMessage('extDescription')
-				});
-			  if(window.localStorage['proxyConfig'] != undefined && window.localStorage['proxyConfig'][20] == "f") {
-				var GREEN = [124, 252, 0, 255];
-				chrome.browserAction.setBadgeText({text: 'o'});
-				chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+				chrome.browserAction.setBadgeText({text: ''});
 				chrome.browserAction.setTitle({
-				  title: chrome.i18n.getMessage('connectedPopupTitle')
+					title: chrome.i18n.getMessage('extDescription')
 				});
-				document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
-			  }
+				
+				if (window.localStorage['proxyConfig'] != undefined && window.localStorage['proxyConfig'][20] == "f") {
+					var GREEN = [124, 252, 0, 255];
+					chrome.browserAction.setBadgeText({text: 'o'});
+					chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+					chrome.browserAction.setTitle({
+						title: chrome.i18n.getMessage('connectedPopupTitle')
+					});
+					
+					clearErrorDivs();
+				}
+				
+				var response = JSON.parse(xmlhttp.response);
+				
+				setServerIP(response.ip);
 			}
 			else if (xmlhttp.status == 0) {
-			  // show an alert and disconnect if we are connected and an error is found
-			  
-			  if ($('#system').is(":hidden") == false) {
-				console.log("Click the try Disconnect button");
-				//$('input[id=proxyTypeSystem]').click();
-				//$('button[type=submit]').click();
-				generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
-				
-			  }
+				// show an alert and disconnect if we are connected and an error is found
+
+				// if this is not an empty array, extension popup is open
+				var views = chrome.extension.getViews({ type: "popup" });
+
+				if (views.length != 0) {
+					if ($('#system').is(":hidden") == false) {
+						//console.log("Click the try Disconnect button");
+						//$('input[id=proxyTypeSystem]').click();
+						//$('button[type=submit]').click();
+						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
+					}
+				}
 			}
 		}
 
 		xmlhttp.open("GET", url, true);
-		xmlhttp.timeout = 2000; // time in milliseconds
+		xmlhttp.timeout = 2500; // time in milliseconds
 		xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
 		xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
 		xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
@@ -48,7 +64,7 @@ function getOnline() {
 function updateProxyStats() {
 	var type = 'Http';
 	
-	console.log(document.getElementById('proxyHost' + type));
+	//console.log(document.getElementById('proxyHost' + type));
 	
 	var haproxyIp = document.getElementById('proxyHost' + type).value;
     var haproxyPort = parseInt(document.getElementById('proxyPort' + type).value, 10);
@@ -81,8 +97,10 @@ function updateProxyStats() {
 				updateProxyStats();
 			}, 5000);
 		}
+		/*
 		console.log(xmlhttp);
 		console.log(xmlhttp.responseText);
+		*/
 	}
 
 	xmlhttp.open("GET", url, true);
@@ -95,14 +113,21 @@ function updateProxyStats() {
 	//setConnectionValues("Provider", "Service", "Time Online", "Server IP", "Data");
 }
 
+function setServerIP(ip) {
+	serverIP = ip;
+	
+	console.log("Setting server IP to " + serverIP);
+	document.getElementById('serverIP').innerHTML = serverIP;
+}
+
 // sets the values on the connected screen
 function setConnectionValues(providerName, serviceName, timeOnline, serverIP, dataTransferred) {
 	console.log("Setting Connection Values");
-	document.getElementById('providerName').value = providerName;
-	document.getElementById('serviceName').value = serviceName;
-	document.getElementById('timeOnline').value = timeOnline;
-	document.getElementById('serverIP').value = serverIP;
-	document.getElementById('dataTransferred').value = dataTransferred;
+	document.getElementById('providerName').innerHTML = providerName;
+	document.getElementById('serviceName').innerHTML = serviceName;
+	document.getElementById('timeOnline').innerHTML = timeOnline;
+	setServerIP(serverIP);
+	document.getElementById('dataTransferred').innerHTML = dataTransferred;
 }
 
 // format a bytes number depending on the amount
@@ -798,16 +823,19 @@ ProxyFormController.prototype = {
 };
 
 
+// remove any existing error div if there is one
+function clearErrorDivs() {
+	var existingError = document.getElementById("proxyFail");
+	if (existingError != null) {
+		existingError.remove();
+	}
+}
+
 function generateAlert(msg, close) {
   // delete all existing and opened alerts
   $('.overlay').remove();
 
-  // remove any existing error div if there is one
-  var existingError = document.getElementById("proxyFail");
-  if (existingError != null) {
-	  existingError.remove();
-  }
-
+  clearErrorDivs();
   
   var success = document.createElement('div');
   success.setAttribute('id', 'proxyFail');

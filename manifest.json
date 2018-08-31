@@ -1,6 +1,6 @@
 {
   "name": "Lethean Proxy/VPN Extension",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Your gateway to the Lethean Proxy/VPN network, a secure and anonymous platform where users sell their bandwidth for cryptocurrency.",
   "default_locale": "en",
   "browser_action": {
@@ -22,7 +22,8 @@
   },
   "permissions": [
     "proxy",
-    "https://geoip.nekudo.com/api/"
+    "https://geoip.nekudo.com/api/",
+	"http://localhost"
   ],
   "manifest_version": 2
 }
