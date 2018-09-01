@@ -108,6 +108,10 @@ $(document).ready(function() {
 
 	// make following action fire when radio button changes
     $('input[type=radio]').click(function(){
+    	if(document.getElementById('proxyHostHttp').value.length < 1 && document.getElementById('proxyPortHttp').value.length < 1){
+    		document.getElementById('proxyHostHttp').value = "127.0.0.1";
+    		document.getElementById('proxyPortHttp').value = "8180";
+    	}
     	setTimeout(function(){
 		  $('button[type=submit]').click();
 		}, 300);
