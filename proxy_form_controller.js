@@ -872,6 +872,8 @@ function generateAlert(msg, close) {
   document.getElementById("imgError").removeAttribute('hidden', 'hidden');
   document.getElementById("dataValue").setAttribute('hidden', 'hidden');
   
+  $("#settingsConfig").attr("hidden", "hidden");
+  
   // switch visible sections, hiding welcome screen and showing the other where error is shown
   $("#fixed_servers").attr("hidden", "hidden");
   $("#system").removeAttr("hidden");
