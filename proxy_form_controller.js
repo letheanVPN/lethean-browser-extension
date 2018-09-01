@@ -41,10 +41,12 @@ function getOnline() {
 
 				if (views.length != 0) {
 					if ($('#system').is(":hidden") == false) {
-						//console.log("Click the try Disconnect button");
-						//$('input[id=proxyTypeSystem]').click();
-						//$('button[type=submit]').click();
+						// trigger click on disconnect button
+						$("#proxyTypeSystem").click();
+						
+						// even though we clicked on disconnect, we want to see the try again screen
 						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
+						//generateAlert("TEST1", false);
 					}
 				}
 			}
@@ -238,6 +240,8 @@ ProxyFormController.getPersistedSettings = function() {
  * @static
  */
 ProxyFormController.setPersistedSettings = function(config) {
+  console.log("Storing Settings");
+  console.log(config);
   window.localStorage['proxyConfig'] = JSON.stringify(config);
 };
 
@@ -587,6 +591,9 @@ ProxyFormController.prototype = {
    */
   applyChanges_: function(e) {
 
+	console.log("applyChanges_ start");
+	console.log(e);
+	
     e.preventDefault();
     e.stopPropagation();
 
@@ -610,6 +617,7 @@ ProxyFormController.prototype = {
   callbackForRegularSettings_: function() {
     if (chrome.runtime.lastError) {
       this.generateAlert_(chrome.i18n.getMessage('errorSettingRegularProxy'), true);
+	  //this.generateAlert_("TEST2", true);
 	  
 	  // trigger click on disconnect button
 	  $("#proxyTypeSystem").click();
@@ -634,6 +642,7 @@ ProxyFormController.prototype = {
   callbackForIncognitoSettings_: function() {
     if (chrome.runtime.lastError) {
       this.generateAlert_(chrome.i18n.getMessage('errorSettingIncognitoProxy'));
+	  //this.generateAlert_("TEST3");
       return;
     }
     ProxyFormController.setPersistedSettings(this.config_);
@@ -719,7 +728,7 @@ ProxyFormController.prototype = {
 
     // If we can't access Incognito settings, throw a message and return.
     if (!this.isAllowedIncognitoAccess_) {
-      var msg = "I'm sorry, Dave, I'm afraid I can't do that. Give me access " +
+      var msg = "I'm sorry, I'm afraid I can't do that. Give me access " +
                 "to Incognito settings by checking the checkbox labeled " +
                 "'Allow in Incognito mode', which is visible at " +
                 "chrome://extensions.";
@@ -788,6 +797,7 @@ ProxyFormController.prototype = {
     else if (l === ProxyFormController.LevelOfControl.OTHER_EXTENSION)
       msg = chrome.i18n.getMessage('errorOtherExtensionControls');
     this.generateAlert_(msg);
+	//this.generateAlert_("TEST4" + msg);
   },
 
 
@@ -813,6 +823,12 @@ ProxyFormController.prototype = {
 
     if (response.result !== null) {
       var error = JSON.parse(response.result);
+	  
+	  // ignore, sometimes we get temporary tunnel connections failed but proxy is working
+	  if (error.error == "net::ERR_TUNNEL_CONNECTION_FAILED") {
+		  return;
+	  }
+	  
       this.generateAlert_(
           chrome.i18n.getMessage(
               error.details ? 'errorProxyDetailedError' : 'errorProxyError',
@@ -842,19 +858,28 @@ function generateAlert(msg, close) {
   
   if(close == true){
     success.classList.add('overlay');
-  }else{
+  }
+  else{
     success.removeAttribute('hidden', 'hidden');
     success.classList.add('proxyFailMsg');
   }
   success.setAttribute('role', 'alert');
-  //msg = msg.replace(".", ".                                                                                                                                  ");
+
   success.textContent = msg;
+  
   document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
   document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
   document.getElementById("imgError").removeAttribute('hidden', 'hidden');
   document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+  
+  // switch visible sections, hiding welcome screen and showing the other where error is shown
+  $("#fixed_servers").attr("hidden", "hidden");
+  $("#system").removeAttr("hidden");
+  
+  $("#dataValue").attr("hidden", "hidden");
+  
   document.body.appendChild(success);
-
+  
   setTimeout(function() { success.classList.add('visible'); }, 10);
 
   setTimeout(function() {
