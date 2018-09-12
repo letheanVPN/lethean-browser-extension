@@ -102,3 +102,26 @@ section legend {
 .nonDisplay{
   display: none;
 }
+
+
+/* loading screen */
+#loadingScreen {
+	position: absolute;
+	
+	z-index: 9999;
+	height: 100%;
+	width: 100%;
+	left: 0;
+    top: 0;
+    background-color: #000000;
+	color: #FFFFFF;
+	text-align: center;
+	padding-top: 40px;
+	display: none;
+}
+
+#loadingScreen img {
+	display: block;
+	margin: auto;
+	margin-top: 50px;
+}
