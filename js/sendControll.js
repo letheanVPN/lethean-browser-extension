@@ -64,6 +64,10 @@ $(document).ready(function() {
 	
 	// connect click
 	$('input[id=proxyTypeManual]').click(function() {
+		
+		// show loading screen
+		$("#loadingScreen").show();
+		
 		console.log("Connect Clicked");
 	
 		$("#fixed_servers").attr("hidden", "hidden");
@@ -71,6 +75,9 @@ $(document).ready(function() {
 		$("#settingsConfig").attr("hidden", "hidden");
 		$("#dataValue").removeAttr("hidden");
 		$("#imgError").attr("hidden", "hidden");
+		
+		// reset the timer check to its default value when connecting or reconnecting
+		resetOnlineTimerCheck();
 	});
 	
 	
