@@ -1,9 +1,37 @@
 
 var serverIP = "";
 
+// interval between each online check. Increase if successfull, decrease if unsuccessfull
+var defaultOnlineCheckTimeout = 5000;
+var onlineCheckTimeout = 5000;
+var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
+
+
+// reset the timeout for validating online
+function resetTimeoutOnline() {
+	console.log("Clearing timeout ID " + onlineTimeoutID);
+	window.clearTimeout(onlineTimeoutID);
+	getOnline();
+}
+
+// reset intervals between online checks and call the method again
+function setOnlineTimerCheck(value) {
+	onlineCheckTimeout = value;
+	resetTimeoutOnline();
+}
+
+// reset intervals between online checks and call the method again
+function resetOnlineTimerCheck() {
+	onlineCheckTimeout = defaultOnlineCheckTimeout;
+	resetTimeoutOnline();
+}
+
 // check if extension is online
 function getOnline() {
-	setTimeout(function() {
+	// keep track of the timeout ID so we can reset it
+	onlineTimeoutID = setTimeout(function() {
+		console.log("Checking if we are online");
+		
 		var url = "https://geoip.nekudo.com/api/";
 		var xmlhttp = new XMLHttpRequest();
 
@@ -32,6 +60,9 @@ function getOnline() {
 				var response = JSON.parse(xmlhttp.response);
 				
 				setServerIP(response.ip);
+				
+				// increase interval for checks if last request was successfull and recursively call to the function
+				setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
 			}
 			else if (xmlhttp.status == 0) {
 				// show an alert and disconnect if we are connected and an error is found
@@ -49,7 +80,13 @@ function getOnline() {
 						//generateAlert("TEST1", false);
 					}
 				}
+				
+				// reset interval for checks if last request was unsuccessfull and recursively call to the function
+				resetOnlineTimerCheck();
 			}
+			
+			// hide loading screen, if visible
+			$("#loadingScreen").hide();
 		}
 
 		xmlhttp.open("GET", url, true);
@@ -58,8 +95,11 @@ function getOnline() {
 		xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
 		xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
 		xmlhttp.send();
-		getOnline();
-	}, 5000);
+		
+		
+	}, onlineCheckTimeout);
+	
+	console.log("New timeout ID is " + onlineTimeoutID + 	" and timeout was " + onlineCheckTimeout);
 }
 
 // update connection stats if we are indeed connected
@@ -144,7 +184,8 @@ function formatBytes(bytes,decimals) {
 
 
 
-getOnline();
+// activate method to check if we are online
+resetOnlineTimerCheck();
 
 // timeout loop to update proxy stats
 updateProxyStats();
