@@ -92,13 +92,16 @@ ProxyErrorHandler.prototype = {
       this.lastError_ = JSON.stringify(details);
 
     function transferComplete(){
-      document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
-      var GREEN = [124, 252, 0, 255];
-      chrome.browserAction.setBadgeText({text: 'o'});
-      chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
-      chrome.browserAction.setTitle({
-        title: chrome.i18n.getMessage('connectedPopupTitle')
-      });
+      if(document.getElementById('proxyFail') !== null){
+        document.getElementById('proxyFail').setAttribute('hidden', 'hidden');
+        var GREEN = [124, 252, 0, 255];
+        chrome.browserAction.setBadgeText({text: 'o'});
+        chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+        chrome.browserAction.setTitle({
+          title: chrome.i18n.getMessage('connectedPopupTitle')
+        });  
+      }
+      
     }
   },
 

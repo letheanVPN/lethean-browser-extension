@@ -71,9 +71,9 @@ function getOnline() {
 				var views = chrome.extension.getViews({ type: "popup" });
 
 				if (views.length != 0) {
-					if ($('#system').is(":hidden") == false) {
+					if (document.getElementById("system").hidden == false) {
 						// trigger click on disconnect button
-						$("#proxyTypeSystem").click();
+						document.getElementById("proxyTypeSystem").click();
 						
 						// even though we clicked on disconnect, we want to see the try again screen
 						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
@@ -86,7 +86,11 @@ function getOnline() {
 			}
 			
 			// hide loading screen, if visible
-			$("#loadingScreen").hide();
+      if(document.getElementById("loadingScreen") !== null){
+        //document.getElementById("loadingScreen").setAttribute("hidden", true);
+        document.getElementById('loadingScreen').style.removeProperty("display");
+      }
+			
 		}
 
 		xmlhttp.open("GET", url, true);
@@ -107,9 +111,11 @@ function updateProxyStats() {
 	var type = 'Http';
 	
 	//console.log(document.getElementById('proxyHost' + type));
-	
-	var haproxyIp = document.getElementById('proxyHost' + type).value;
+	if(document.getElementById('proxyHost' + type) !== null || document.getElementById('proxyPort' + type) !== null){
+    var haproxyIp = document.getElementById('proxyHost' + type).value;
     var haproxyPort = parseInt(document.getElementById('proxyPort' + type).value, 10);
+    
+  }
 	
 	// return and check later if host or port is invalid
 	if (haproxyIp == "" || isNaN(haproxyPort)) {
@@ -120,7 +126,7 @@ function updateProxyStats() {
 		return;
 	}
 	
-	var url = "http://" + haproxyIp + ":" + haproxyPort + "/haproxy_stats;csv";
+	var url = "http://" + haproxyIp + ":8181/stats;csv";
 	
 	console.log("Checking HAProxy @ " + url);
 		
@@ -133,8 +139,39 @@ function updateProxyStats() {
 			haproxyStats = haproxyStats.split(',');
 			haproxyStats[8] = haproxyStats[8].replace('"', '');
 			haproxyStats[9] = haproxyStats[9].replace('"', '');
-			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
 			
+      var data = "Download: " + formatBytes(parseInt(haproxyStats[9])) + " Upload: " + formatBytes(parseInt(haproxyStats[8]));
+      console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
+      
+      var urlProvider = "http://127.0.0.1:8181/provider";
+      var xmlhttpProvider = new XMLHttpRequest();
+      xmlhttpProvider.onreadystatechange=function() {
+        if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
+
+            var haproxyStats = JSON.parse(xmlhttpProvider.responseText);
+            
+            //providerStats = csvToArray(xmlhttpProvider.responseText);
+            //providerStats = providerStats.split(',');
+            //providerStats = providerStats.replace("'", '');
+            console.log(providerStats + " -------------------------------- FULL");
+            console.log(providerStats[0] + " -------------------------------- FULL[0]");
+            console.log(providerStats[0].provider + " -------------------------------- PROVIDER");
+            console.log(providerStats[0].plan + " -------------------------------- PLAN");
+            
+            //document.getElementById("providerName").value = providerStats[0].provider;
+            //document.getElementById("serviceName").value = providerStats[0].plan;
+
+            setConnectionValues(providerStats[0].provider, providerStats[0].plan, "Time Online", "Server IP", data);
+        }
+      }
+    
+      xmlhttpProvider.open("GET", urlProvider, true);
+      xmlhttpProvider.timeout = 2000; // time in milliseconds
+      xmlhttpProvider.setRequestHeader("Access-Control-Allow-Origin","*");
+      xmlhttpProvider.setRequestHeader('Access-Control-Allow-Methods', '*');
+      xmlhttpProvider.setRequestHeader('Access-Control-Allow-Headers', '*');
+      xmlhttpProvider.send();
+
 			setTimeout(function() {
 				updateProxyStats();
 			}, 5000);
@@ -159,7 +196,10 @@ function setServerIP(ip) {
 	serverIP = ip;
 	
 	console.log("Setting server IP to " + serverIP);
-	document.getElementById('serverIP').innerHTML = serverIP;
+  if(document.getElementById('serverIP') !== null){
+    document.getElementById('serverIP').innerHTML = serverIP;  
+  }
+	
 }
 
 // sets the values on the connected screen
@@ -661,7 +701,7 @@ ProxyFormController.prototype = {
 	  //this.generateAlert_("TEST2", true);
 	  
 	  // trigger click on disconnect button
-	  $("#proxyTypeSystem").click();
+	  document.getElementById("proxyTypeSystem").click();
       
       return;
     }
@@ -890,7 +930,11 @@ function clearErrorDivs() {
 
 function generateAlert(msg, close) {
   // delete all existing and opened alerts
-  $('.overlay').remove();
+  var els = document.getElementsByClassName('overlay');
+
+  while (els[0]) {
+    els[0].classList.remove('active')
+  }
 
   clearErrorDivs();
   
@@ -913,13 +957,13 @@ function generateAlert(msg, close) {
   document.getElementById("imgError").removeAttribute('hidden', 'hidden');
   document.getElementById("dataValue").setAttribute('hidden', 'hidden');
   
-  $("#settingsConfig").attr("hidden", "hidden");
+  document.getElementById("settingsConfig").setAttribute('hidden', 'hidden');
   
   // switch visible sections, hiding welcome screen and showing the other where error is shown
-  $("#fixed_servers").attr("hidden", "hidden");
-  $("#system").removeAttr("hidden");
+  document.getElementById("fixed_servers").setAttribute('hidden', 'hidden');
+  document.getElementById("system").removeAttribute('hidden', 'hidden');
   
-  $("#dataValue").attr("hidden", "hidden");
+  document.getElementById("dataValue").setAttribute('hidden', 'hidden');
   
   document.body.appendChild(success);
   
