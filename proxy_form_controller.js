@@ -106,6 +106,80 @@ function getOnline() {
 	console.log("New timeout ID is " + onlineTimeoutID + 	" and timeout was " + onlineCheckTimeout);
 }
 
+
+function csvToArray( strData, strDelimiter ){
+  strDelimiter = (strDelimiter || ",");
+  var objPattern = new RegExp(
+      (
+          // Delimiters.
+          "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+          // Quoted fields.
+          "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+          // Standard fields.
+          "([^\"\\" + strDelimiter + "\\r\\n]*))"
+      ),
+      "gi"
+      );
+
+  var arrData = [[]];
+
+  var arrMatches = null;
+  while (arrMatches = objPattern.exec( strData )){
+
+      var strMatchedDelimiter = arrMatches[ 1 ];
+      if (
+          strMatchedDelimiter.length &&
+          strMatchedDelimiter !== strDelimiter
+          ){
+          arrData.push( [] );
+
+      }
+
+      var strMatchedValue;
+      if (arrMatches[ 2 ]){
+          strMatchedValue = arrMatches[ 2 ].replace(
+              new RegExp( "\"\"", "g" ),
+              "\""
+              );
+
+      } else {
+          strMatchedValue = arrMatches[ 3 ];
+      }
+
+      arrData[ arrData.length - 1 ].push( strMatchedValue );
+  }
+  return( arrData );
+}
+
+
+function timer(time) {
+  secs = parseFloat(time)
+  console.log(secs + " my secs ------------")
+  var h = secs/60/60
+  var m = (secs/60)%60
+  var s = secs%60
+  var array = [h,m,s].map(Math.floor)
+  var value = ''
+  for(x = 0; x < array.length; x++){
+      if(array[x] < 10){
+          array[x] = "0" + array[x]
+      }else{
+          array[x] = array[x]
+      }
+      function getCom(y){
+          if(y < 2){return ":"}else{return ""}
+      }
+      var c = getCom(x)
+      value = value + array[x] + c
+  }
+
+  return value
+
+}
+
+
 // update connection stats if we are indeed connected
 function updateProxyStats() {
 	var type = 'Http';
@@ -134,34 +208,45 @@ function updateProxyStats() {
 	
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      console.log(xmlhttp.responseText + "my response")
 			var haproxyStats = csvToArray(xmlhttp.responseText);
 			haproxyStats = JSON.stringify(haproxyStats[1]);
+      console.log(haproxyStats + "my haproxyStats")
 			haproxyStats = haproxyStats.split(',');
 			haproxyStats[8] = haproxyStats[8].replace('"', '');
 			haproxyStats[9] = haproxyStats[9].replace('"', '');
 			
-      var data = "Download: " + formatBytes(parseInt(haproxyStats[9])) + " Upload: " + formatBytes(parseInt(haproxyStats[8]));
+      var data = "Down: " + formatBytes(parseInt(haproxyStats[9])) + " Up: " + formatBytes(parseInt(haproxyStats[8]));
       console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
       
-      var urlProvider = "http://127.0.0.1:8181/provider";
+      haproxyStats = csvToArray(xmlhttp.responseText);
+      haproxyStats = JSON.stringify(haproxyStats[3]);
+      console.log(haproxyStats + "my haproxyStats")
+      haproxyStats = haproxyStats.split(',');
+      haproxyStats[23] = haproxyStats[23].replace('"', '');
+
+      var timeOnline = timer(haproxyStats[23])
+
+      var urlProvider = "http://127.0.0.1:8182/provider";
       var xmlhttpProvider = new XMLHttpRequest();
       xmlhttpProvider.onreadystatechange=function() {
         if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
 
-            var haproxyStats = JSON.parse(xmlhttpProvider.responseText);
-            
-            //providerStats = csvToArray(xmlhttpProvider.responseText);
-            //providerStats = providerStats.split(',');
-            //providerStats = providerStats.replace("'", '');
+            var providerStats = csvToArray(xmlhttpProvider.responseText);
+            providerStats = JSON.stringify(providerStats);
+            providerStats = providerStats.split(',');
+            providerStats[0] = providerStats[0].split('"').join('');
+            providerStats[0] = providerStats[0].split("[").join('');
+            providerStats[1] = providerStats[1].split('"').join('');
+            providerStats[1] = providerStats[1].split(']').join('');
             console.log(providerStats + " -------------------------------- FULL");
-            console.log(providerStats[0] + " -------------------------------- FULL[0]");
-            console.log(providerStats[0].provider + " -------------------------------- PROVIDER");
-            console.log(providerStats[0].plan + " -------------------------------- PLAN");
+            console.log(providerStats[0] + " -------------------------------- PROVIDER");
+            console.log(providerStats[1] + " -------------------------------- PLAN");
             
             //document.getElementById("providerName").value = providerStats[0].provider;
             //document.getElementById("serviceName").value = providerStats[0].plan;
 
-            setConnectionValues(providerStats[0].provider, providerStats[0].plan, "Time Online", "Server IP", data);
+            setConnectionValues(providerStats[0], providerStats[1], timeOnline, data);
         }
       }
     
@@ -184,12 +269,11 @@ function updateProxyStats() {
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.timeout = 2000; // time in milliseconds
-    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xmlhttp.send();
+  xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+  xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+  xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+  xmlhttp.send();
 	
-	//setConnectionValues("Provider", "Service", "Time Online", "Server IP", "Data");
 }
 
 function setServerIP(ip) {
@@ -203,7 +287,7 @@ function setServerIP(ip) {
 }
 
 // sets the values on the connected screen
-function setConnectionValues(providerName, serviceName, timeOnline, serverIP, dataTransferred) {
+function setConnectionValues(providerName, serviceName, timeOnline, dataTransferred) {
 	console.log("Setting Connection Values");
 	document.getElementById('providerName').innerHTML = providerName;
 	document.getElementById('serviceName').innerHTML = serviceName;
@@ -348,7 +432,10 @@ ProxyFormController.prototype = {
    * @return {Array<string>} A list of hostnames that should bypass the proxy.
    */
   get bypassList() {
-    return document.getElementById('bypassList').value.split(/\s*(?:,|^)\s*/m);
+    console.log("bypasslist");
+    return ["<local>"];
+
+    //return document.getElementById('bypassList').value.split(/\s*(?:,|^)\s*/m);
   },
 
 

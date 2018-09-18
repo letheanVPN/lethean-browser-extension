@@ -22,9 +22,7 @@
   },
   "permissions": [
     "proxy",
-    "https://geoip.nekudo.com/api/",
-    "https://127.0.0.1:8181/*",
-    "https://localhost:8181/*"
+    "<all_urls>"
   ],
   "manifest_version": 2
 }
