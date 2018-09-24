@@ -3,6 +3,8 @@ $(document).ready(function() {
 	var defaultHost = "localhost";
 	var defaultPort = "8180";
 	
+	var defaultStats = "[not available]";
+	
 	if (window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s") {
 		console.log("Local Storage does not exist");
 		$("#system").attr("hidden", "hidden");
@@ -23,6 +25,23 @@ $(document).ready(function() {
 	}
 	if (localStorage.getItem('proxyPort') == null) {
 		localStorage.setItem('proxyPort', defaultPort);
+	}
+	
+	// set default connection stats values in storage
+	if (localStorage.getItem('stats_provider') == null) {
+		localStorage.setItem('stats_provider', defaultStats);
+	}
+	if (localStorage.getItem('stats_service') == null) {
+		localStorage.setItem('stats_service', defaultStats);
+	}
+	if (localStorage.getItem('stats_time') == null) {
+		localStorage.setItem('stats_time', 0);
+	}
+	if (localStorage.getItem('stats_ip') == null) {
+		localStorage.setItem('stats_ip', defaultStats);
+	}
+	if (localStorage.getItem('stats_transfer') == null) {
+		localStorage.setItem('stats_transfer', defaultStats);
 	}
 	
 	// load form fields with values from storage

@@ -1,10 +1,9 @@
-
-var serverIP = "";
-
 // interval between each online check. Increase if successfull, decrease if unsuccessfull
 var defaultOnlineCheckTimeout = 5000;
 var onlineCheckTimeout = 5000;
 var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
+
+var defaultStats = "[not available]";
 
 
 // reset the timeout for validating online
@@ -208,54 +207,26 @@ function updateProxyStats() {
 	
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      console.log(xmlhttp.responseText + "my response")
+			console.log(xmlhttp.responseText + "my response")
 			var haproxyStats = csvToArray(xmlhttp.responseText);
 			haproxyStats = JSON.stringify(haproxyStats[1]);
-      console.log(haproxyStats + "my haproxyStats")
+			console.log(haproxyStats + "my haproxyStats")
 			haproxyStats = haproxyStats.split(',');
 			haproxyStats[8] = haproxyStats[8].replace('"', '');
 			haproxyStats[9] = haproxyStats[9].replace('"', '');
 			
-      var data = "Down: " + formatBytes(parseInt(haproxyStats[9])) + " Up: " + formatBytes(parseInt(haproxyStats[8]));
-      console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
-      
-      haproxyStats = csvToArray(xmlhttp.responseText);
-      haproxyStats = JSON.stringify(haproxyStats[3]);
-      console.log(haproxyStats + "my haproxyStats")
-      haproxyStats = haproxyStats.split(',');
-      haproxyStats[23] = haproxyStats[23].replace('"', '');
+			var data = "Down: " + formatBytes(parseInt(haproxyStats[9])) + " Up: " + formatBytes(parseInt(haproxyStats[8]));
+			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
 
-      var timeOnline = timer(haproxyStats[23])
+			haproxyStats = csvToArray(xmlhttp.responseText);
+			haproxyStats = JSON.stringify(haproxyStats[3]);
+			console.log(haproxyStats + "my haproxyStats")
+			haproxyStats = haproxyStats.split(',');
+			haproxyStats[23] = haproxyStats[23].replace('"', '');
 
-      var urlProvider = "http://127.0.0.1:8182/provider";
-      var xmlhttpProvider = new XMLHttpRequest();
-      xmlhttpProvider.onreadystatechange=function() {
-        if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
-
-            var providerStats = csvToArray(xmlhttpProvider.responseText);
-            providerStats = JSON.stringify(providerStats);
-            providerStats = providerStats.split(',');
-            providerStats[0] = providerStats[0].split('"').join('');
-            providerStats[0] = providerStats[0].split("[").join('');
-            providerStats[1] = providerStats[1].split('"').join('');
-            providerStats[1] = providerStats[1].split(']').join('');
-            console.log(providerStats + " -------------------------------- FULL");
-            console.log(providerStats[0] + " -------------------------------- PROVIDER");
-            console.log(providerStats[1] + " -------------------------------- PLAN");
-            
-            //document.getElementById("providerName").value = providerStats[0].provider;
-            //document.getElementById("serviceName").value = providerStats[0].plan;
-
-            setConnectionValues(providerStats[0], providerStats[1], timeOnline, data);
-        }
-      }
-    
-      xmlhttpProvider.open("GET", urlProvider, true);
-      xmlhttpProvider.timeout = 2000; // time in milliseconds
-      xmlhttpProvider.setRequestHeader("Access-Control-Allow-Origin","*");
-      xmlhttpProvider.setRequestHeader('Access-Control-Allow-Methods', '*');
-      xmlhttpProvider.setRequestHeader('Access-Control-Allow-Headers', '*');
-      xmlhttpProvider.send();
+			var timeOnline = haproxyStats[23];
+			
+			setConnectionData(timeOnline, data);
 
 			setTimeout(function() {
 				updateProxyStats();
@@ -269,31 +240,126 @@ function updateProxyStats() {
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.timeout = 2000; // time in milliseconds
-  xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-  xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
-  xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-  xmlhttp.send();
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
+}
+
+
+function updateProxyProvider() {
+	var urlProvider = "http://127.0.0.1:8182/provider";
+	var xmlhttpProvider = new XMLHttpRequest();
+	xmlhttpProvider.onreadystatechange=function() {
+		if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
+			
+			console.log("Provider");
+			console.log(xmlhttpProvider.responseText);
+
+			var providerStats = csvToArray(xmlhttpProvider.responseText);
+			providerStats = JSON.stringify(providerStats);
+			providerStats = providerStats.split(',');
+			providerStats[0] = providerStats[0].split('"').join('');
+			providerStats[0] = providerStats[0].split("[").join('');
+			providerStats[1] = providerStats[1].split('"').join('');
+			providerStats[1] = providerStats[1].split(']').join('');
+			console.log(providerStats + " -------------------------------- FULL");
+			console.log(providerStats[0] + " -------------------------------- PROVIDER");
+			console.log(providerStats[1] + " -------------------------------- PLAN");
+			
+			//document.getElementById("providerName").value = providerStats[0].provider;
+			//document.getElementById("serviceName").value = providerStats[0].plan;
+
+			setConnectionProvider(providerStats[0], providerStats[1]);
+			
+			setTimeout(function() {
+				updateProxyProvider();
+			}, 10000);
+		}
+	}
+
+	xmlhttpProvider.open("GET", urlProvider, true);
+	xmlhttpProvider.timeout = 2000; // time in milliseconds
+	xmlhttpProvider.setRequestHeader("Access-Control-Allow-Origin","*");
+	xmlhttpProvider.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttpProvider.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttpProvider.send();
+}
+
+
+// updates values in the connection screen
+function updateConnectedScreenStats() {
+	if (document.getElementById('providerName') !== null) {
+		document.getElementById('providerName').innerHTML = localStorage.getItem('stats_provider');
+	}
 	
+	if (document.getElementById('serviceName') !== null) {
+		document.getElementById('serviceName').innerHTML = localStorage.getItem('stats_service');
+	}
+	
+	if (document.getElementById('timeOnline') !== null) {
+		var time = localStorage.getItem('stats_time');
+		document.getElementById('timeOnline').innerHTML = timer(time);
+		// increase local timer
+		localStorage.setItem('stats_time', time + 1);
+	}
+	
+	if (document.getElementById('serverIP') !== null) {
+		document.getElementById('serverIP').innerHTML = localStorage.getItem('stats_ip');  
+	}
+	
+	if (document.getElementById('dataTransferred') !== null) {
+		document.getElementById('dataTransferred').innerHTML = localStorage.getItem('stats_transfer');
+	}
+	
+	
+	setTimeout(function() {
+		updateConnectedScreenStats();
+	}, 10000);
 }
 
 function setServerIP(ip) {
-	serverIP = ip;
+	// if fields are empty, set them as not available
+	if (ip == "") {
+		ip = defaultStats;
+	}
 	
-	console.log("Setting server IP to " + serverIP);
-  if(document.getElementById('serverIP') !== null){
-    document.getElementById('serverIP').innerHTML = serverIP;  
-  }
-	
+	console.log("Setting server IP to " + ip);
+	localStorage.setItem('stats_ip', ip);
 }
 
-// sets the values on the connected screen
-function setConnectionValues(providerName, serviceName, timeOnline, dataTransferred) {
+
+// sets the values from the connection status
+function setConnectionData(timeOnline, dataTransferred) {
+	// if fields are empty, set them as not available
+	if (timeOnline == "") {
+		timeOnline = 0;
+	}
+	
+	if (dataTransferred == "") {
+		dataTransferred = defaultStats;
+	}
+	
 	console.log("Setting Connection Values");
-	document.getElementById('providerName').innerHTML = providerName;
-	document.getElementById('serviceName').innerHTML = serviceName;
-	document.getElementById('timeOnline').innerHTML = timeOnline;
-	setServerIP(serverIP);
-	document.getElementById('dataTransferred').innerHTML = dataTransferred;
+	localStorage.setItem('stats_time', timeOnline);
+	localStorage.setItem('stats_transfer', dataTransferred);
+}
+
+// sets the values from the provider information
+function setConnectionProvider(providerName, serviceName) {
+	
+	// if fields are empty, set them as not available
+	if (providerName == "") {
+		providerName = defaultStats;
+	}
+	
+	if (serviceName == "") {
+		serviceName = defaultStats;
+	}
+	
+	console.log("Setting Connection Values");
+	localStorage.setItem('stats_provider', providerName);
+	localStorage.setItem('stats_service', serviceName);
 }
 
 // format a bytes number depending on the amount
@@ -313,6 +379,12 @@ resetOnlineTimerCheck();
 
 // timeout loop to update proxy stats
 updateProxyStats();
+
+// timeout loop to update proxy provider
+updateProxyProvider();
+
+// update stats screen based on existing local storage
+updateConnectedScreenStats();
 
 var ProxyFormController = function(id) {
 
