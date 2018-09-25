@@ -205,9 +205,11 @@ function updateProxyStats() {
 		
 	var xmlhttp = new XMLHttpRequest();
 	
+	// get every seconds from haproxy info about donwload/upload/time online
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			console.log(xmlhttp.responseText + "my response")
+			//parse donwload and upload haproxy stats from /stats;csv
 			var haproxyStats = csvToArray(xmlhttp.responseText);
 			haproxyStats = JSON.stringify(haproxyStats[1]);
 			console.log(haproxyStats + "my haproxyStats")
@@ -217,7 +219,7 @@ function updateProxyStats() {
 			
 			var data = "Down: " + formatBytes(parseInt(haproxyStats[9])) + " Up: " + formatBytes(parseInt(haproxyStats[8]));
 			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
-
+			// parse time online from /stats;csv
 			haproxyStats = csvToArray(xmlhttp.responseText);
 			haproxyStats = JSON.stringify(haproxyStats[3]);
 			console.log(haproxyStats + "my haproxyStats")
@@ -230,7 +232,7 @@ function updateProxyStats() {
 
 			setTimeout(function() {
 				updateProxyStats();
-			}, 5000);
+			}, 1000);
 		}
 		/*
 		console.log(xmlhttp);
@@ -246,16 +248,22 @@ function updateProxyStats() {
 	xmlhttp.send();
 }
 
-
+// get service and provider name to show on dashboard screen
 function updateProxyProvider() {
 	var urlProvider = "http://127.0.0.1:8182/provider";
 	var xmlhttpProvider = new XMLHttpRequest();
 	xmlhttpProvider.onreadystatechange=function() {
 		if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
-			
-			console.log("Provider");
 			console.log(xmlhttpProvider.responseText);
+			var providerStats = JSON.parse(xmlhttpProvider.responseText);
+			console.log(providerStats.provider + " my provider 0")
+			console.log(providerStats.service + " my provider 0")
+			//document.getElementById("providerName").innerText = providerStats.provider;
+			//document.getElementById("serviceName").innerText = providerStats.service;
+			setConnectionProvider(providerStats.provider, providerStats.service);
 
+
+/*
 			var providerStats = csvToArray(xmlhttpProvider.responseText);
 			providerStats = JSON.stringify(providerStats);
 			providerStats = providerStats.split(',');
@@ -272,9 +280,11 @@ function updateProxyProvider() {
 
 			setConnectionProvider(providerStats[0], providerStats[1]);
 			
+*/
+			
 			setTimeout(function() {
 				updateProxyProvider();
-			}, 10000);
+			}, 1000);
 		}
 	}
 
@@ -315,7 +325,7 @@ function updateConnectedScreenStats() {
 	
 	setTimeout(function() {
 		updateConnectedScreenStats();
-	}, 10000);
+	}, 1000);
 }
 
 function setServerIP(ip) {
