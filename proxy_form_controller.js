@@ -1,9 +1,36 @@
+// interval between each online check. Increase if successfull, decrease if unsuccessfull
+var defaultOnlineCheckTimeout = 5000;
+var onlineCheckTimeout = 5000;
+var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
 
-var serverIP = "";
+var defaultStats = "[not available]";
+
+
+// reset the timeout for validating online
+function resetTimeoutOnline() {
+	console.log("Clearing timeout ID " + onlineTimeoutID);
+	window.clearTimeout(onlineTimeoutID);
+	getOnline();
+}
+
+// reset intervals between online checks and call the method again
+function setOnlineTimerCheck(value) {
+	onlineCheckTimeout = value;
+	resetTimeoutOnline();
+}
+
+// reset intervals between online checks and call the method again
+function resetOnlineTimerCheck() {
+	onlineCheckTimeout = defaultOnlineCheckTimeout;
+	resetTimeoutOnline();
+}
 
 // check if extension is online
 function getOnline() {
-	setTimeout(function() {
+	// keep track of the timeout ID so we can reset it
+	onlineTimeoutID = setTimeout(function() {
+		console.log("Checking if we are online");
+		
 		var url = "https://geoip.nekudo.com/api/";
 		var xmlhttp = new XMLHttpRequest();
 
@@ -32,6 +59,9 @@ function getOnline() {
 				var response = JSON.parse(xmlhttp.response);
 				
 				setServerIP(response.ip);
+				
+				// increase interval for checks if last request was successfull and recursively call to the function
+				setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
 			}
 			else if (xmlhttp.status == 0) {
 				// show an alert and disconnect if we are connected and an error is found
@@ -40,16 +70,26 @@ function getOnline() {
 				var views = chrome.extension.getViews({ type: "popup" });
 
 				if (views.length != 0) {
-					if ($('#system').is(":hidden") == false) {
+					if (document.getElementById("system").hidden == false) {
 						// trigger click on disconnect button
-						$("#proxyTypeSystem").click();
+						document.getElementById("proxyTypeSystem").click();
 						
 						// even though we clicked on disconnect, we want to see the try again screen
 						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
 						//generateAlert("TEST1", false);
 					}
 				}
+				
+				// reset interval for checks if last request was unsuccessfull and recursively call to the function
+				resetOnlineTimerCheck();
 			}
+			
+			// hide loading screen, if visible
+      if(document.getElementById("loadingScreen") !== null){
+        //document.getElementById("loadingScreen").setAttribute("hidden", true);
+        document.getElementById('loadingScreen').style.removeProperty("display");
+      }
+			
 		}
 
 		xmlhttp.open("GET", url, true);
@@ -58,18 +98,97 @@ function getOnline() {
 		xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
 		xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
 		xmlhttp.send();
-		getOnline();
-	}, 5000);
+		
+		
+	}, onlineCheckTimeout);
+	
+	console.log("New timeout ID is " + onlineTimeoutID + 	" and timeout was " + onlineCheckTimeout);
 }
+
+
+function csvToArray( strData, strDelimiter ){
+  strDelimiter = (strDelimiter || ",");
+  var objPattern = new RegExp(
+      (
+          // Delimiters.
+          "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+          // Quoted fields.
+          "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+          // Standard fields.
+          "([^\"\\" + strDelimiter + "\\r\\n]*))"
+      ),
+      "gi"
+      );
+
+  var arrData = [[]];
+
+  var arrMatches = null;
+  while (arrMatches = objPattern.exec( strData )){
+
+      var strMatchedDelimiter = arrMatches[ 1 ];
+      if (
+          strMatchedDelimiter.length &&
+          strMatchedDelimiter !== strDelimiter
+          ){
+          arrData.push( [] );
+
+      }
+
+      var strMatchedValue;
+      if (arrMatches[ 2 ]){
+          strMatchedValue = arrMatches[ 2 ].replace(
+              new RegExp( "\"\"", "g" ),
+              "\""
+              );
+
+      } else {
+          strMatchedValue = arrMatches[ 3 ];
+      }
+
+      arrData[ arrData.length - 1 ].push( strMatchedValue );
+  }
+  return( arrData );
+}
+
+
+function timer(time) {
+  secs = parseFloat(time)
+  console.log(secs + " my secs ------------")
+  var h = secs/60/60
+  var m = (secs/60)%60
+  var s = secs%60
+  var array = [h,m,s].map(Math.floor)
+  var value = ''
+  for(x = 0; x < array.length; x++){
+      if(array[x] < 10){
+          array[x] = "0" + array[x]
+      }else{
+          array[x] = array[x]
+      }
+      function getCom(y){
+          if(y < 2){return ":"}else{return ""}
+      }
+      var c = getCom(x)
+      value = value + array[x] + c
+  }
+
+  return value
+
+}
+
 
 // update connection stats if we are indeed connected
 function updateProxyStats() {
 	var type = 'Http';
 	
 	//console.log(document.getElementById('proxyHost' + type));
-	
-	var haproxyIp = document.getElementById('proxyHost' + type).value;
+	if(document.getElementById('proxyHost' + type) !== null || document.getElementById('proxyPort' + type) !== null){
+    var haproxyIp = document.getElementById('proxyHost' + type).value;
     var haproxyPort = parseInt(document.getElementById('proxyPort' + type).value, 10);
+    
+  }
 	
 	// return and check later if host or port is invalid
 	if (haproxyIp == "" || isNaN(haproxyPort)) {
@@ -80,24 +199,40 @@ function updateProxyStats() {
 		return;
 	}
 	
-	var url = "http://" + haproxyIp + ":" + haproxyPort + "/haproxy_stats;csv";
+	var url = "http://" + haproxyIp + ":8181/stats;csv";
 	
 	console.log("Checking HAProxy @ " + url);
 		
 	var xmlhttp = new XMLHttpRequest();
 	
+	// get every seconds from haproxy info about donwload/upload/time online
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			console.log(xmlhttp.responseText + "my response")
+			//parse donwload and upload haproxy stats from /stats;csv
 			var haproxyStats = csvToArray(xmlhttp.responseText);
 			haproxyStats = JSON.stringify(haproxyStats[1]);
+			console.log(haproxyStats + "my haproxyStats")
 			haproxyStats = haproxyStats.split(',');
 			haproxyStats[8] = haproxyStats[8].replace('"', '');
 			haproxyStats[9] = haproxyStats[9].replace('"', '');
-			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
 			
+			var data = "Down: " + formatBytes(parseInt(haproxyStats[9])) + " Up: " + formatBytes(parseInt(haproxyStats[8]));
+			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
+			// parse time online from /stats;csv
+			haproxyStats = csvToArray(xmlhttp.responseText);
+			haproxyStats = JSON.stringify(haproxyStats[3]);
+			console.log(haproxyStats + "my haproxyStats")
+			haproxyStats = haproxyStats.split(',');
+			haproxyStats[23] = haproxyStats[23].replace('"', '');
+
+			var timeOnline = haproxyStats[23];
+			
+			setConnectionData(timeOnline, data);
+
 			setTimeout(function() {
 				updateProxyStats();
-			}, 5000);
+			}, 1000);
 		}
 		/*
 		console.log(xmlhttp);
@@ -107,29 +242,134 @@ function updateProxyStats() {
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.timeout = 2000; // time in milliseconds
-    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xmlhttp.send();
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
+}
+
+// get service and provider name to show on dashboard screen
+function updateProxyProvider() {
+	var urlProvider = "http://127.0.0.1:8182/provider";
+	var xmlhttpProvider = new XMLHttpRequest();
+	xmlhttpProvider.onreadystatechange=function() {
+		if (xmlhttpProvider.readyState == 4 && xmlhttpProvider.status == 200) {
+			console.log(xmlhttpProvider.responseText);
+			var providerStats = JSON.parse(xmlhttpProvider.responseText);
+			console.log(providerStats.provider + " my provider 0")
+			console.log(providerStats.service + " my provider 0")
+			//document.getElementById("providerName").innerText = providerStats.provider;
+			//document.getElementById("serviceName").innerText = providerStats.service;
+			setConnectionProvider(providerStats.provider, providerStats.service);
+
+
+/*
+			var providerStats = csvToArray(xmlhttpProvider.responseText);
+			providerStats = JSON.stringify(providerStats);
+			providerStats = providerStats.split(',');
+			providerStats[0] = providerStats[0].split('"').join('');
+			providerStats[0] = providerStats[0].split("[").join('');
+			providerStats[1] = providerStats[1].split('"').join('');
+			providerStats[1] = providerStats[1].split(']').join('');
+			console.log(providerStats + " -------------------------------- FULL");
+			console.log(providerStats[0] + " -------------------------------- PROVIDER");
+			console.log(providerStats[1] + " -------------------------------- PLAN");
+			
+			//document.getElementById("providerName").value = providerStats[0].provider;
+			//document.getElementById("serviceName").value = providerStats[0].plan;
+
+			setConnectionProvider(providerStats[0], providerStats[1]);
+			
+*/
+			
+			setTimeout(function() {
+				updateProxyProvider();
+			}, 1000);
+		}
+	}
+
+	xmlhttpProvider.open("GET", urlProvider, true);
+	xmlhttpProvider.timeout = 2000; // time in milliseconds
+	xmlhttpProvider.setRequestHeader("Access-Control-Allow-Origin","*");
+	xmlhttpProvider.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttpProvider.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttpProvider.send();
+}
+
+
+// updates values in the connection screen
+function updateConnectedScreenStats() {
+	if (document.getElementById('providerName') !== null) {
+		document.getElementById('providerName').innerHTML = localStorage.getItem('stats_provider');
+	}
 	
-	//setConnectionValues("Provider", "Service", "Time Online", "Server IP", "Data");
+	if (document.getElementById('serviceName') !== null) {
+		document.getElementById('serviceName').innerHTML = localStorage.getItem('stats_service');
+	}
+	
+	if (document.getElementById('timeOnline') !== null) {
+		var time = localStorage.getItem('stats_time');
+		document.getElementById('timeOnline').innerHTML = timer(time);
+		// increase local timer
+		localStorage.setItem('stats_time', time + 1);
+	}
+	
+	if (document.getElementById('serverIP') !== null) {
+		document.getElementById('serverIP').innerHTML = localStorage.getItem('stats_ip');  
+	}
+	
+	if (document.getElementById('dataTransferred') !== null) {
+		document.getElementById('dataTransferred').innerHTML = localStorage.getItem('stats_transfer');
+	}
+	
+	
+	setTimeout(function() {
+		updateConnectedScreenStats();
+	}, 1000);
 }
 
 function setServerIP(ip) {
-	serverIP = ip;
+	// if fields are empty, set them as not available
+	if (ip == "") {
+		ip = defaultStats;
+	}
 	
-	console.log("Setting server IP to " + serverIP);
-	document.getElementById('serverIP').innerHTML = serverIP;
+	console.log("Setting server IP to " + ip);
+	localStorage.setItem('stats_ip', ip);
 }
 
-// sets the values on the connected screen
-function setConnectionValues(providerName, serviceName, timeOnline, serverIP, dataTransferred) {
+
+// sets the values from the connection status
+function setConnectionData(timeOnline, dataTransferred) {
+	// if fields are empty, set them as not available
+	if (timeOnline == "") {
+		timeOnline = 0;
+	}
+	
+	if (dataTransferred == "") {
+		dataTransferred = defaultStats;
+	}
+	
 	console.log("Setting Connection Values");
-	document.getElementById('providerName').innerHTML = providerName;
-	document.getElementById('serviceName').innerHTML = serviceName;
-	document.getElementById('timeOnline').innerHTML = timeOnline;
-	setServerIP(serverIP);
-	document.getElementById('dataTransferred').innerHTML = dataTransferred;
+	localStorage.setItem('stats_time', timeOnline);
+	localStorage.setItem('stats_transfer', dataTransferred);
+}
+
+// sets the values from the provider information
+function setConnectionProvider(providerName, serviceName) {
+	
+	// if fields are empty, set them as not available
+	if (providerName == "") {
+		providerName = defaultStats;
+	}
+	
+	if (serviceName == "") {
+		serviceName = defaultStats;
+	}
+	
+	console.log("Setting Connection Values");
+	localStorage.setItem('stats_provider', providerName);
+	localStorage.setItem('stats_service', serviceName);
 }
 
 // format a bytes number depending on the amount
@@ -144,10 +384,17 @@ function formatBytes(bytes,decimals) {
 
 
 
-getOnline();
+// activate method to check if we are online
+resetOnlineTimerCheck();
 
 // timeout loop to update proxy stats
 updateProxyStats();
+
+// timeout loop to update proxy provider
+updateProxyProvider();
+
+// update stats screen based on existing local storage
+updateConnectedScreenStats();
 
 var ProxyFormController = function(id) {
 
@@ -267,7 +514,10 @@ ProxyFormController.prototype = {
    * @return {Array<string>} A list of hostnames that should bypass the proxy.
    */
   get bypassList() {
-    return document.getElementById('bypassList').value.split(/\s*(?:,|^)\s*/m);
+    console.log("bypasslist");
+    return ["<local>"];
+
+    //return document.getElementById('bypassList').value.split(/\s*(?:,|^)\s*/m);
   },
 
 
@@ -620,7 +870,7 @@ ProxyFormController.prototype = {
 	  //this.generateAlert_("TEST2", true);
 	  
 	  // trigger click on disconnect button
-	  $("#proxyTypeSystem").click();
+	  document.getElementById("proxyTypeSystem").click();
       
       return;
     }
@@ -849,7 +1099,11 @@ function clearErrorDivs() {
 
 function generateAlert(msg, close) {
   // delete all existing and opened alerts
-  $('.overlay').remove();
+  var els = document.getElementsByClassName('overlay');
+
+  while (els[0]) {
+    els[0].classList.remove('active')
+  }
 
   clearErrorDivs();
   
@@ -872,13 +1126,13 @@ function generateAlert(msg, close) {
   document.getElementById("imgError").removeAttribute('hidden', 'hidden');
   document.getElementById("dataValue").setAttribute('hidden', 'hidden');
   
-  $("#settingsConfig").attr("hidden", "hidden");
+  document.getElementById("settingsConfig").setAttribute('hidden', 'hidden');
   
   // switch visible sections, hiding welcome screen and showing the other where error is shown
-  $("#fixed_servers").attr("hidden", "hidden");
-  $("#system").removeAttr("hidden");
+  document.getElementById("fixed_servers").setAttribute('hidden', 'hidden');
+  document.getElementById("system").removeAttribute('hidden', 'hidden');
   
-  $("#dataValue").attr("hidden", "hidden");
+  document.getElementById("dataValue").setAttribute('hidden', 'hidden');
   
   document.body.appendChild(success);
   
