@@ -1,7 +1,7 @@
 {
-  "name": "Lethean Proxy/VPN Extension",
+  "name": "Lethean Proxy VPN",
   "version": "3.0.0",
-  "description": "Your gateway to the Lethean Proxy/VPN network, a secure and anonymous platform where users sell their bandwidth for cryptocurrency.",
+  "description": "Secure, anonymous, high speed VPN and proxy. Powered by the blockchain.",
   "default_locale": "en",
   "browser_action": {
     "default_icon": "icon16.png",
