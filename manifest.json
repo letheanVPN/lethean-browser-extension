@@ -1,6 +1,6 @@
 {
   "name": "Lethean Proxy VPN",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Secure, anonymous, high speed VPN and proxy. Powered by the blockchain.",
   "default_locale": "en",
   "browser_action": {
