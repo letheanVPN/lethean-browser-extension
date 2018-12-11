@@ -31,7 +31,7 @@ function getOnline() {
 	onlineTimeoutID = setTimeout(function() {
 		console.log("Checking if we are online");
 		
-		var url = "https://geoip.nekudo.com/api/";
+		var url = "https://api.ipify.org/?format=json";
 		var xmlhttp = new XMLHttpRequest();
 
 		xmlhttp.onreadystatechange = function() {
