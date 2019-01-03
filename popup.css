@@ -3,12 +3,13 @@ body {
   width: 140px;
   background-color: #000;
   line-height: 14px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
 h1 {
   color: #fff;
-  font: 10px Helvetica, sans-serif;
-  padding: 3px;
+  font-size: 10px;
+  padding: 4px 0px 3px 7px;
   margin: -8px -8px 0px -8px;
   background-image: url(images/bg.png);
   background-repeat: repeat;
@@ -76,7 +77,7 @@ section legend {
   background: rgba(0, 0, 0, 0.75);
   border-radius: 5px;
   color: #FFF;
-  font: 1.5em/1.2 Helvetica Neue, sans-serif;
+  font-size: 1.5em/1.2;
   transform: scale(0);
   transition: all 1.0s ease;
   z-index: 10;
@@ -118,6 +119,8 @@ section legend {
 	text-align: center;
 	padding-top: 40px;
 	display: none;
+  line-height: 14px;
+  font-size: 10px;
 }
 
 #loadingScreen img {
