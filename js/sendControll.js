@@ -91,7 +91,9 @@ $(document).ready(function() {
 		document.getElementById('proxyHostHttp').value = defaultHost;
         document.getElementById('proxyPortHttp').value = defaultPort;
         document.getElementById("connectedMsg").innerText = "CONNECTED";
-        document.getElementById("tryAgainMsg").innerText = "DISCONNECT";
+		document.getElementById("tryAgainMsg").innerText = "DISCONNECT";
+		document.getElementById('proxyAutoEnable').checked = false;
+		localStorage.setItem('AutoEnable', false);
 	});
 	
 	
@@ -137,6 +139,19 @@ $(document).ready(function() {
 	// catch auto enable change so we can store it to localStorage
 	$("#proxyAutoEnable").click(function() {
 		localStorage.setItem('AutoEnable', document.getElementById('proxyAutoEnable').checked);
+		// show loading screen
+		$("#loadingScreen").show();
+		
+		console.log("Connect Clicked");
+	
+		$("#fixed_servers").attr("hidden", "hidden");
+		$("#system").removeAttr("hidden");
+		$("#settingsConfig").attr("hidden", "hidden");
+		$("#dataValue").removeAttr("hidden");
+		$("#imgError").attr("hidden", "hidden");
+		
+		// reset the timer check to its default value when connecting or reconnecting
+		resetOnlineTimerCheck();
 	});
 
 	var flag = 2

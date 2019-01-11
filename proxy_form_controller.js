@@ -218,16 +218,40 @@ function updateProxyStats() {
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
-			if (flagToGetProxyOnline == 0) {	
-				// verify with is true or false to populate the checkbox
-				if (typeof(window.localStorage['AutoEnable']) != "undefined") {
-					if (window.localStorage['AutoEnable'][0] == "t" && typeof(document.getElementById('submitConnect')) != "null") {
-						flagToGetProxyOnline = 1;
-						document.getElementById('proxyTypeManual').click();						
-					}
-				}
-				
-			}
+        if (flagToGetProxyOnline == 0) {	
+          // verify with is true or false to populate the checkbox
+          if (typeof(window.localStorage['AutoEnable']) != "undefined") {
+            if (window.localStorage['AutoEnable'][0] == "t" && typeof(document.getElementById('submitConnect')) != "null") {
+            var proxyConfigFixed = {"regular":{"mode":"fixed_servers","rules":{"singleProxy":{"scheme":"http","host":"localhost","port":8180},"bypassList":["<local>"]}},"incognito":null};
+            window.localStorage['proxyConfig'] = JSON.stringify(proxyConfigFixed);
+
+            var GREEN = [124, 252, 0, 255];
+            chrome.browserAction.setBadgeText({text: 'o'});
+            chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
+            chrome.browserAction.setTitle({
+            title: chrome.i18n.getMessage('connectedPopupTitle')
+            });
+
+            console.log(window.localStorage['proxyHost'] + ' my proxy host auto connect');
+            console.log(parseInt(window.localStorage['proxyPort']) + ' my proxy port auto connect');
+
+            var config = {
+              mode: "fixed_servers",
+              rules: {
+                singleProxy: {
+                  scheme: "http",
+                  host: window.localStorage['proxyHost'],
+                  port: parseInt(window.localStorage['proxyPort'])
+                },
+                bypassList: ["<local>"]
+              }
+            };
+            chrome.proxy.settings.set({value: config, scope: 'regular'}, function() {});
+            clearErrorDivs();		
+            }
+          }
+
+        }
 
 
 			console.log(xmlhttp.responseText + "my response")
