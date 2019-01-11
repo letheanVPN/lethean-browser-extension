@@ -25,8 +25,18 @@ function resetOnlineTimerCheck() {
 	resetTimeoutOnline();
 }
 
+// use to get submit button
+function getElementsByAttrib(attrib) {
+    return document.querySelectorAll('[' + attrib + ']');
+}
+
+// use to submit button
+var flagToGetProxyOnline = 0;
+
+
 // check if extension is online
 function getOnline() {
+
 	// keep track of the timeout ID so we can reset it
 	onlineTimeoutID = setTimeout(function() {
 		console.log("Checking if we are online");
@@ -155,7 +165,6 @@ function csvToArray( strData, strDelimiter ){
 
 function timer(time) {
   secs = parseFloat(time)
-  console.log(secs + " my secs ------------")
   var h = secs/60/60
   var m = (secs/60)%60
   var s = secs%60
@@ -208,6 +217,19 @@ function updateProxyStats() {
 	// get every seconds from haproxy info about donwload/upload/time online
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+			if (flagToGetProxyOnline == 0) {	
+				// verify with is true or false to populate the checkbox
+				if (typeof(window.localStorage['AutoEnable']) != "undefined") {
+					if (window.localStorage['AutoEnable'][0] == "t" && typeof(document.getElementById('submitConnect')) != "null") {
+						flagToGetProxyOnline = 1;
+						document.getElementById('proxyTypeManual').click();						
+					}
+				}
+				
+			}
+
+
 			console.log(xmlhttp.responseText + "my response")
 			//parse donwload and upload haproxy stats from /stats;csv
 			var haproxyStats = csvToArray(xmlhttp.responseText);
@@ -229,15 +251,15 @@ function updateProxyStats() {
 			var timeOnline = haproxyStats[23];
 			
 			setConnectionData(timeOnline, data);
-
-			setTimeout(function() {
-				updateProxyStats();
-			}, 1000);
 		}
 		/*
 		console.log(xmlhttp);
 		console.log(xmlhttp.responseText);
 		*/
+
+		setTimeout(function() {
+			updateProxyStats();
+		}, 3000);
 	}
 
 	xmlhttp.open("GET", url, true);
