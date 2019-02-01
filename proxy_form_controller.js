@@ -1,6 +1,6 @@
 // interval between each online check. Increase if successfull, decrease if unsuccessfull
-var defaultOnlineCheckTimeout = 5000;
-var onlineCheckTimeout = 5000;
+var defaultOnlineCheckTimeout = 1000;
+var onlineCheckTimeout = 1000;
 var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
 
 var defaultStats = "[not available]";
@@ -23,6 +23,58 @@ function setOnlineTimerCheck(value) {
 function resetOnlineTimerCheck() {
 	onlineCheckTimeout = defaultOnlineCheckTimeout;
 	resetTimeoutOnline();
+}
+
+function getBadge() {
+	if (window.localStorage['proxyConfig'][20] != "s") {
+		// Badge the popup icon.
+		var RED = [255, 0, 0, 255];
+		chrome.browserAction.setBadgeBackgroundColor({color: RED});
+		chrome.browserAction.setBadgeText({text: 'X'});
+		chrome.browserAction.setTitle({
+			title: chrome.i18n.getMessage('errorPopupTitle')
+		});
+
+		// delete all existing and opened alerts
+		var els = document.getElementsByClassName('overlay');
+
+		while (els[0]) {
+		els[0].classList.remove('active')
+		}
+
+		clearErrorDivs();
+
+		var success = document.createElement('div');
+		success.setAttribute('id', 'proxyFail');
+
+		if(close == true){
+		success.classList.add('overlay');
+		}
+		else{
+		success.removeAttribute('hidden', 'hidden');
+		success.classList.add('proxyFailMsg');
+		}
+		success.setAttribute('role', 'alert');
+
+		success.textContent = chrome.i18n.getMessage('errorProxyError');
+
+		document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
+		document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
+		document.getElementById("imgError").removeAttribute('hidden', 'hidden');
+		document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+
+		document.getElementById("settingsConfig").setAttribute('hidden', 'hidden');
+
+		// switch visible sections, hiding welcome screen and showing the other where error is shown
+		document.getElementById("fixed_servers").setAttribute('hidden', 'hidden');
+		document.getElementById("system").removeAttribute('hidden', 'hidden');
+
+		document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+
+		document.body.appendChild(success);
+
+		setTimeout(function() { success.classList.add('visible'); }, 10);
+	}
 }
 
 // check if extension is online
@@ -61,9 +113,13 @@ function getOnline() {
 				setServerIP(response.ip);
 				
 				// increase interval for checks if last request was successfull and recursively call to the function
-				setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
+				setOnlineTimerCheck(5 * defaultOnlineCheckTimeout);
 			}
 			else if (xmlhttp.status == 0) {
+
+				// Badge the popup icon.
+				getBadge();
+
 				// show an alert and disconnect if we are connected and an error is found
 
 				// if this is not an empty array, extension popup is open
@@ -72,10 +128,10 @@ function getOnline() {
 				if (views.length != 0) {
 					if (document.getElementById("system").hidden == false) {
 						// trigger click on disconnect button
-						document.getElementById("proxyTypeSystem").click();
+						//document.getElementById("proxyTypeSystem").click();
 						
 						// even though we clicked on disconnect, we want to see the try again screen
-						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
+						//generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
 						//generateAlert("TEST1", false);
 					}
 				}
@@ -233,6 +289,9 @@ function updateProxyStats() {
 			setTimeout(function() {
 				updateProxyStats();
 			}, 1000);
+		} else {
+			// Badge the popup icon.
+			getBadge();
 		}
 		/*
 		console.log(xmlhttp);

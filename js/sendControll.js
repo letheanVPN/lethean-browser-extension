@@ -4,6 +4,62 @@ $(document).ready(function() {
 	var defaultPort = "8180";
 	
 	var defaultStats = "[not available]";
+
+	var url = "http://geo.geosurf.io/";
+	var xmlhttp = new XMLHttpRequest();
+
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.status != 200 && window.localStorage['proxyConfig'][20] != "s") {
+
+			// Badge the popup icon.
+			var RED = [255, 0, 0, 255];
+			chrome.browserAction.setBadgeBackgroundColor({color: RED});
+			chrome.browserAction.setBadgeText({text: 'X'});
+			chrome.browserAction.setTitle({
+				title: chrome.i18n.getMessage('errorPopupTitle')
+			});
+
+			// delete all existing and opened alerts
+			var els = document.getElementsByClassName('overlay');
+
+			while (els[0]) {
+			els[0].classList.remove('active')
+			}
+
+			clearErrorDivs();
+
+			var success = document.createElement('div');
+			success.setAttribute('id', 'proxyFail');
+
+			if(close == true){
+			success.classList.add('overlay');
+			}
+			else{
+			success.removeAttribute('hidden', 'hidden');
+			success.classList.add('proxyFailMsg');
+			}
+			success.setAttribute('role', 'alert');
+
+			success.textContent = chrome.i18n.getMessage('errorProxyError');
+
+			document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
+			document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
+			document.getElementById("imgError").removeAttribute('hidden', 'hidden');
+			document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+
+			document.getElementById("settingsConfig").setAttribute('hidden', 'hidden');
+
+			// switch visible sections, hiding welcome screen and showing the other where error is shown
+			document.getElementById("fixed_servers").setAttribute('hidden', 'hidden');
+			document.getElementById("system").removeAttribute('hidden', 'hidden');
+
+			document.getElementById("dataValue").setAttribute('hidden', 'hidden');
+
+			document.body.appendChild(success);
+
+			setTimeout(function() { success.classList.add('visible'); }, 10);
+		}
+	}
 	
 	if (window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s") {
 		console.log("Local Storage does not exist");
@@ -131,6 +187,14 @@ $(document).ready(function() {
 			flag = 2;
 		}
 	});
+
+
+	xmlhttp.open("GET", url, true);
+	xmlhttp.timeout = 2500; // time in milliseconds
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
 
 	// make following action fire when radio button changes
     $('input[type=radio]').click(function(){
