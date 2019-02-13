@@ -1,6 +1,6 @@
 // interval between each online check. Increase if successfull, decrease if unsuccessfull
-var defaultOnlineCheckTimeout = 1000;
-var onlineCheckTimeout = 5000;
+var defaultOnlineCheckTimeout = 10000;
+var onlineCheckTimeout = 10000;
 var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
 
 var defaultStats = "[not available]";
@@ -113,7 +113,7 @@ function getOnline() {
 				setServerIP(response.ip);
 				
 				// increase interval for checks if last request was successfull and recursively call to the function
-				setOnlineTimerCheck(5 * defaultOnlineCheckTimeout);
+				setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
 			}
 			else if (xmlhttp.status == 0) {
 
