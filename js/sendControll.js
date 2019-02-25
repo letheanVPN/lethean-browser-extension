@@ -4,6 +4,13 @@ $(document).ready(function() {
 	var defaultPort = "8180";
 	
 	var defaultStats = "[not available]";
+
+	// verify with is true or false to populate the checkbox
+	if (window.localStorage['AutoEnable'] == undefined || window.localStorage['AutoEnable'][0] == "f") {
+		document.getElementById('proxyAutoEnable').checked = false;
+	} else {
+		document.getElementById('proxyAutoEnable').checked = true;
+	}
 	
 	if (window.localStorage['proxyConfig'] == undefined || window.localStorage['proxyConfig'][20] == "s") {
 		console.log("Local Storage does not exist");
@@ -26,6 +33,12 @@ $(document).ready(function() {
 	if (localStorage.getItem('proxyPort') == null) {
 		localStorage.setItem('proxyPort', defaultPort);
 	}
+	/*
+	if (localStorage.getItem('AutoEnable') == null) {
+		localStorage.setItem('AutoEnable', false);
+		document.getElementById('proxyAutoEnable').checked = false;
+	}
+	*/
 	
 	// set default connection stats values in storage
 	if (localStorage.getItem('stats_provider') == null) {
@@ -51,6 +64,7 @@ $(document).ready(function() {
 	console.log("Local Storage Exists");
 	console.log(localStorage.getItem('proxyHost'));
 	console.log(localStorage.getItem('proxyPort'));
+	console.log("proxy Auto Enable ==> " + localStorage.getItem('AutoEnable'));
 	
 	// fill in default value for host if empty
 	if (document.getElementById('proxyHostHttp').value == "") {
@@ -77,7 +91,9 @@ $(document).ready(function() {
 		document.getElementById('proxyHostHttp').value = defaultHost;
         document.getElementById('proxyPortHttp').value = defaultPort;
         document.getElementById("connectedMsg").innerText = "CONNECTED";
-        document.getElementById("tryAgainMsg").innerText = "DISCONNECT";
+		document.getElementById("tryAgainMsg").innerText = "DISCONNECT";
+		document.getElementById('proxyAutoEnable').checked = false;
+		localStorage.setItem('AutoEnable', false);
 	});
 	
 	
@@ -120,11 +136,35 @@ $(document).ready(function() {
 		}
 	});
 
+	// catch auto enable change so we can store it to localStorage
+	$("#proxyAutoEnable").click(function() {
+		localStorage.setItem('AutoEnable', document.getElementById('proxyAutoEnable').checked);
+		// show loading screen
+		$("#loadingScreen").show();
+		
+		console.log("Connect Clicked");
+	
+		$("#fixed_servers").attr("hidden", "hidden");
+		$("#system").removeAttr("hidden");
+		$("#settingsConfig").attr("hidden", "hidden");
+		$("#dataValue").removeAttr("hidden");
+		$("#imgError").attr("hidden", "hidden");
+		
+		// reset the timer check to its default value when connecting or reconnecting
+		resetOnlineTimerCheck();
+	});
+
 	var flag = 2
 	$("#settingsConfig").click(function(){
 
 		if(flag == 2){
 			$("#proxyHost").show();
+
+			// make the fild able to use
+			document.getElementById('proxyAutoEnable').disabled = false;
+			document.getElementById('proxyHostHttp').disabled = false;
+			document.getElementById('proxyPortHttp').disabled = false;
+			
 			flag = 1;
 		}else{
 			$("#proxyHost").hide();
