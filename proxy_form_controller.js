@@ -1,6 +1,8 @@
 // interval between each online check. Increase if successfull, decrease if unsuccessfull
+
 var defaultOnlineCheckTimeout = 10000;
 var onlineCheckTimeout = 10000;
+
 var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
 
 var defaultStats = "[not available]";
@@ -70,15 +72,25 @@ function getOnline() {
 
 				// increase interval for checks if last request was successfull and recursively call to the function
 				setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
-			} else if (xmlhttp.status != 200) {
 
-				// Badge the popup icon.
-				generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
+			}
+			else if (xmlhttp.status == 0) {
 
 				// show an alert and disconnect if we are connected and an error is found
 
 				// if this is not an empty array, extension popup is open
 				var views = chrome.extension.getViews({ type: "popup" });
+
+        if (views.length != 0) {
+					if (document.getElementById("system").hidden == false) {
+						// trigger click on disconnect button
+						document.getElementById("proxyTypeSystem").click();
+						
+						// even though we clicked on disconnect, we want to see the try again screen
+						generateAlert(chrome.i18n.getMessage('errorProxyError'), false);
+						//generateAlert("TEST1", false);
+					}
+				}
 				
 				// reset interval for checks if last request was unsuccessfull and recursively call to the function
 				resetOnlineTimerCheck();
@@ -223,6 +235,7 @@ function updateProxyStats() {
 			getOnline();
 			setTimeout(function() {
 				updateProxyStats();
+
 			}, 5000);
 
 		} else if (xmlhttp.status != 200 && xmlhttp.readyState == 4) {
