@@ -41,7 +41,7 @@ function getOnline() {
 	onlineTimeoutID = setTimeout(function() {
 		console.log("Checking if we are online");
 		
-		var url = "https://geoip.nekudo.com/api/";
+		var url = "http://geo.geosurf.io/";
 		var xmlhttp = new XMLHttpRequest();
 
 		xmlhttp.onreadystatechange = function() {
@@ -421,7 +421,7 @@ function setConnectionProvider(providerName, serviceName) {
 // format a bytes number depending on the amount
 function formatBytes(bytes,decimals) {
   if (bytes == 0) return '0 Bytes';
-  var k = 1024,
+  var k = 1000,
 	  dm = decimals || 2,
 	  sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
 	  i = Math.floor(Math.log(bytes) / Math.log(k));
